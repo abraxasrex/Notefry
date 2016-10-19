@@ -22,23 +22,36 @@ const Nav = React.createClass ({
 const Panel = React.createClass({
   render() {
     return (
-      <div className='panel-fluid'> {this.props.currentCal || 'not set'}:{this.props.cellLabel + 1}</div>
+      <div className='panel-fluid'> {this.props.currentCal || 'not set'} 
+      {/* {this.props.cellLabel + 1} */}
+      </div>
     );
   }
 });
 
 const Calendar = React.createClass({
   render() {
+    /* bootstrap calendar */
     let calObjects =this.props.calObjects;
     let currentCal = this.props.currentCal;
+    let calResults;
+    if(currentCal == 'Day'){
+      calResults = calObjects.Day.times;
+    } else {
+      calResults = calObjects[currentCal];
+    }
+    console.log('results ', currentCal);
+    /* return panels */
     return (
       <div className='cal-container' style={{background:'#F0FFFF'}}> I am a calendar.
               {/* {objects.map(function(object, i){
             return <ObjectRow obj={object} key={i} />;
         })} */}
-        {calObjects.map(function(obj, i){
-          return <Panel className='cal-panel' key={i} currentCal={currentCal} cellLabel={i}/>
-        })}
+        {
+            calResults.map(function(obj, i){
+              return <Panel className='cal-panel month-day-cal-panel' key={i} currentCal={obj.name} cellLabel={i}/>
+            })
+        }
 
       </div>
     );
@@ -55,13 +68,92 @@ const App = React.createClass({
           'Month': 30,
           'Year': 12
         ],
-        calObjects: [
-          {memos: [1]},
-          {memos: [2]},
-          {memos: [3]},
-          {memos: [4]},
-          {memos: [5]}
-        ]
+        calObjects: {
+          Day: {
+            times: [
+              {name: '1AM', memos: []},
+              {name: '2AM', memos: []},
+              {name: '3AM', memos: []},
+              {name: '4AM', memos: []},
+              {name: '5AM', memos: []},
+              {name: '6AM', memos: []},
+              {name: '7AM', memos: []},
+              {name: '8AM', memos: []},
+              {name: '9AM', memos: []},
+              {name: '10AM', memos: []},
+              {name: '11AM', memos: []},
+              {name: '12AM', memos: []},
+              {name: '1PM', memos: []},
+              {name: '2PM', memos: []},
+              {name: '3PM', memos: []},
+              {name: '4PM', memos: []},
+              {name: '5PM', memos: []},
+              {name: '6PM', memos: []},
+              {name: '7PM', memos: []},
+              {name: '8PM', memos: []},
+              {name: '9PM', memos: []},
+              {name: '10PM', memos: []},
+              {name: '11PM', memos: []},
+              {name: '12PM', memos: []}
+            ]
+          },
+          Week: [
+            {name: 'Monday', date: '', times: []},
+            {name: 'Tuesday', date: '', times: []},
+            {name: 'Wednesday', date: '', times: []},
+            {name: 'Thursday', date: '', times: []},
+            {name: 'Friday', date: '', times: []},
+            {name: 'Saturday', date: '', times: []},
+            {name: 'Sunday', date: '', times: []}
+          ],
+          Month: [
+            {name:1,times:[]},
+            {name:2,times:[]},
+            {name:3,times:[]},
+            {"name":4,"times":[]},
+            {"name":5,"times":[]},
+            {"name":6,"times":[]},
+            {"name":7,"times":[]},
+            {"name":8,"times":[]},
+            {"name":9,"times":[]},
+            {"name":10,"times":[]},
+            {"name":11,"times":[]},
+            {"name":12,"times":[]},
+            {"name":13,"times":[]},
+            {"name":14,"times":[]},
+            {"name":15,"times":[]},
+            {"name":16,"times":[]},
+            {"name":17,"times":[]},
+            {"name":18,"times":[]},
+            {"name":19,"times":[]},
+            {"name":20,"times":[]},
+            {"name":21,"times":[]},
+            {"name":22,"times":[]},
+            {"name":23,"times":[]},
+            {"name":24,"times":[]},
+            {"name":25,"times":[]},
+            {"name":26,"times":[]},
+            {"name":27,"times":[]},
+            {"name":28,"times":[]},
+            {"name":29,"times":[]},
+            {"name":30,"times":[]},
+            {"name":31,"times":[]}
+          ],
+          Year: [
+            {name: 'January', days: []},
+            {name: 'February', days: []},
+            {name: 'March', days: []},
+            {name: 'April', days: []},
+            {name: 'May', days: []},
+            {name: 'June', days: []},
+            {name: 'July', days: []},
+            {name: 'August', days: []},
+            {name: 'September', days: []},
+            {name: 'October', days: []},
+            {name: 'November', days: []},
+            {name: 'December', days: []}
+          ]
+        }
     };
   },
   setCal (e) {
