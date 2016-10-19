@@ -4,7 +4,7 @@ import './App.css';
 
 const NavPill = React.createClass({
   render () {
-    return <div className='nav-partial' onClick={() => this.props.setCal(this.props.pillName)}>{this.props.pillName}</div>
+    return <div className='nav-partial' style={this.props.style} onClick={() => this.props.setCal(this.props.pillName)}>{this.props.pillName}</div>
   }
 });
 
@@ -22,45 +22,64 @@ const Nav = React.createClass ({
 const Panel = React.createClass({
   render() {
     return (
-      <div className='panel-fluid'> I am a panel. current calendar is {this.props.currentCal || 'not set'} </div>
+      <div className='panel-fluid'> {this.props.currentCal || 'not set'}:{this.props.cellLabel + 1}</div>
     );
   }
 });
 
 const Calendar = React.createClass({
   render() {
+    let calObjects =this.props.calObjects;
+    let currentCal = this.props.currentCal;
     return (
-      <div> I am a calendar.
-      <Panel currentCal={this.props.currentCal || 'not set'}/>
+      <div className='cal-container' style={{background:'#F0FFFF'}}> I am a calendar.
+              {/* {objects.map(function(object, i){
+            return <ObjectRow obj={object} key={i} />;
+        })} */}
+        {calObjects.map(function(obj, i){
+          return <Panel className='cal-panel' key={i} currentCal={currentCal} cellLabel={i}/>
+        })}
+
       </div>
     );
   }
 });
 
-
-
 const App = React.createClass({
   getInitialState() {
-    return { currentCal: 'day'};
+    return {
+        currentCal: 'Day',
+        calCounts: [
+          'Day': 24,
+          'Week': 7,
+          'Month': 30,
+          'Year': 12
+        ],
+        calObjects: [
+          {memos: [1]},
+          {memos: [2]},
+          {memos: [3]},
+          {memos: [4]},
+          {memos: [5]}
+        ]
+    };
   },
   setCal (e) {
-    //e.preventDefault();
     this.setState({
       currentCal: e
     });
   },
   render() {
-    //this.setCal = this.setCal.bind(this);
     return (
       <div className="App">
         <div className="App-header">
         <h1>Notifry</h1>
         <h5>New Note</h5>
-          {/* <img src={logo} className="App-logo" alt="logo" /> */}
         </div>
         <div className='app-container'>
-          <Nav setCal={this.setCal}/>
-          <Calendar currentCal={this.state.currentCal} />
+          <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
+          <Calendar currentCal={this.state.currentCal}
+          calObjects={this.state.calObjects} />
         </div>
       </div>
     );

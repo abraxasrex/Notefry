@@ -34,9 +34,10 @@
 
 .cal-container {
  width: 100%;
- margin: 0 auto;
  padding: 5px;
- border: 1px solid black;
+ margin: 10px 0px 10px 0px;
+ border: 0.5px solid grey;
+ border-radius: 5px;
 }
 
 /* panel views */
@@ -48,6 +49,7 @@
   border: 1px solid black;
   height: 50px;
   margin: 5px;
+  background: #FFF8DC;
 }
 .year-month-cal-panel {
   width: 33%;
@@ -66,7 +68,6 @@
 .nav-full {
   width: 100%;
   /*border: 1px solid black;*/
-  background-color: Gainsboro;
 
   display: flex;
   justify-content: space-around;
