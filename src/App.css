@@ -38,30 +38,43 @@
  margin: 10px 0px 10px 0px;
  border: 0.5px solid grey;
  border-radius: 5px;
+ display: flex;
+ justify-content: space-around;
+ flex-wrap: wrap;
 }
 
 /* panel views */
 .panel-fluid {
   /* fills panel based on calendar view */
-
+ width: 100%;
+ height: 100%;
 }
 .cal-panel {
   border: 1px solid black;
-  height: 50px;
+  height: 75px;
   margin: 5px;
-  background: #FFF8DC;
-  border:
-}
-.year-month-cal-panel {
-  width: 33%;
-}
-
-.month-day-cal-panel {
-  width: 15%;
+  padding: 5px;
+  background: #FFA07A;
+  border: 0.5px solid black;
+  transition: all 0.05s;
 }
 
-.day-hour-cal-panel {
-  width: 50%;
+.popuppanel {
+  background: #FF8C00;
+  width:100%;
+}
+
+.Month-cal-panel {
+  width: 22.5%;
+}
+.Week-cal-panel {
+  width: 12%;
+}
+.Day-cal-panel {
+  width: 90%;
+}
+.Year-cal-panel {
+  width: 30%;
 }
 
 /* nav view */
@@ -82,4 +95,5 @@
   border: 1px solid;
   border-color: rgba(1,1,1,0.3);
   box-shadow: 2.5px 2.5px 1px #888888;
+  padding: 5px;
 }

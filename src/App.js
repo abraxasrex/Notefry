@@ -20,13 +20,50 @@ const Nav = React.createClass ({
 });
 
 const Panel = React.createClass({
+  getInitialState: function() {
+    return {
+      selected: false
+    };
+  },
+  select: function() {
+    //this.setState({whichSelected: this.props.calName});
+    this.setState({selected: !this.state.selected});
+  },
   render() {
+    let unpopped = 'cal-panel ' + this.props.currentCal + '-cal-panel';
+    // let popped = 'cal-panel ' + this.props.currentCal + '-cal-panel popuppanel';
+     let hilite  = '#FF8C00';
+     let normal = '#FFA07A';
+    //  if(this.state.whichSelected !== this.props.calName){
+    //   // //this.state.selected = false;
+    //   this.setState({selected: false});
+    //  }
     return (
-      <div className='panel-fluid'> {this.props.currentCal || 'not set'} 
+      <div className={unpopped}
+      style={  this.state.selected ? {background: hilite} : {background: normal}}
+      //  onClick={() => this.select() }>
+      select={this.props.select}>
+      {this.props.calName || 'not set'}
       {/* {this.props.cellLabel + 1} */}
       </div>
     );
   }
+});
+
+const Day = React.createClass({
+
+});
+
+const Week = React.createClass({
+
+});
+
+const Month = React.createClass({
+
+});
+
+const Year = React.createClass({
+
 });
 
 const Calendar = React.createClass({
@@ -40,16 +77,14 @@ const Calendar = React.createClass({
     } else {
       calResults = calObjects[currentCal];
     }
-    console.log('results ', currentCal);
+    let calClass = 'cal-panel ' + currentCal + '-cal-panel';
     /* return panels */
     return (
-      <div className='cal-container' style={{background:'#F0FFFF'}}> I am a calendar.
-              {/* {objects.map(function(object, i){
-            return <ObjectRow obj={object} key={i} />;
-        })} */}
+      <div className='cal-container' style={{background:'#F0FFFF'}}>
+      {/* I am a calendar. */}
         {
             calResults.map(function(obj, i){
-              return <Panel className='cal-panel month-day-cal-panel' key={i} currentCal={obj.name} cellLabel={i}/>
+              return <Panel className= 'panel-fluid' key={i + obj.name} currentCal={currentCal} calName={obj.name} cellLabel={i}/>
             })
         }
 
@@ -61,7 +96,7 @@ const Calendar = React.createClass({
 const App = React.createClass({
   getInitialState() {
     return {
-        currentCal: 'Day',
+        currentCal: 'Week',
         calCounts: [
           'Day': 24,
           'Week': 7,
@@ -137,7 +172,8 @@ const App = React.createClass({
             {"name":28,"times":[]},
             {"name":29,"times":[]},
             {"name":30,"times":[]},
-            {"name":31,"times":[]}
+            {"name":31,"times":[]},
+            {"name":'',"times":[]}
           ],
           Year: [
             {name: 'January', days: []},
