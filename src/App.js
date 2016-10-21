@@ -1,10 +1,13 @@
 import React from 'react';
-// import logo from './logo.svg';
 import './App.css';
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 const NavPill = React.createClass({
   render () {
-    return <div className='nav-partial' style={this.props.style} onClick={() => this.props.setCal(this.props.pillName)}>{this.props.pillName}</div>
+    return <div className='nav-partial' style={this.props.style}
+      onClick={() => this.props.setCal(this.props.pillName)}>
+      {this.props.pillName}
+    </div>
   }
 });
 
@@ -25,69 +28,35 @@ const Panel = React.createClass({
       selected: false
     };
   },
-  select: function() {
-    //this.setState({whichSelected: this.props.calName});
-    this.setState({selected: !this.state.selected});
-  },
   render() {
-    let unpopped = 'cal-panel ' + this.props.currentCal + '-cal-panel';
-    // let popped = 'cal-panel ' + this.props.currentCal + '-cal-panel popuppanel';
+     let panelClasses = 'cal-panel ' + this.props.currentCal + '-cal-panel';
      let hilite  = '#FF8C00';
      let normal = '#FFA07A';
-    //  if(this.state.whichSelected !== this.props.calName){
-    //   // //this.state.selected = false;
-    //   this.setState({selected: false});
-    //  }
     return (
-      <div className={unpopped}
-      style={  this.state.selected ? {background: hilite} : {background: normal}}
-      //  onClick={() => this.select() }>
-      select={this.props.select}>
-      {this.props.calName || 'not set'}
-      {/* {this.props.cellLabel + 1} */}
+      <div className={panelClasses}
+        style={  (this.props.selected === this.props.propKey) ? {background: hilite} : {background: normal}}
+        onClick={() => this.props.select(this.props.propKey) }>
+        {this.props.calName || 'not set'}
       </div>
     );
   }
 });
 
-const Day = React.createClass({
-
-});
-
-const Week = React.createClass({
-
-});
-
-const Month = React.createClass({
-
-});
-
-const Year = React.createClass({
-
-});
-
 const Calendar = React.createClass({
   render() {
-    /* bootstrap calendar */
-    let calObjects =this.props.calObjects;
-    let currentCal = this.props.currentCal;
-    let calResults;
-    if(currentCal == 'Day'){
-      calResults = calObjects.Day.times;
-    } else {
-      calResults = calObjects[currentCal];
-    }
-    let calClass = 'cal-panel ' + currentCal + '-cal-panel';
+    let calProps = this.props;
+    let calResults = calProps.calObjects[calProps.currentCal];
     /* return panels */
     return (
       <div className='cal-container' style={{background:'#F0FFFF'}}>
-      {/* I am a calendar. */}
         {
             calResults.map(function(obj, i){
-              return <Panel className= 'panel-fluid' key={i + obj.name} currentCal={currentCal} calName={obj.name} cellLabel={i}/>
+              return <Panel className='panel-fluid' key={i + '_' + obj.name + '_' + calProps.currentCal}
+              propKey={i + '_' + obj.name + '_' + calProps.currentCal}
+              currentCal={calProps.currentCal} calName={obj.name}
+              selected={calProps.selected} select={calProps.select}/>
             })
         }
-
       </div>
     );
   }
@@ -104,8 +73,7 @@ const App = React.createClass({
           'Year': 12
         ],
         calObjects: {
-          Day: {
-            times: [
+            Day: [
               {name: '1AM', memos: []},
               {name: '2AM', memos: []},
               {name: '3AM', memos: []},
@@ -130,8 +98,7 @@ const App = React.createClass({
               {name: '10PM', memos: []},
               {name: '11PM', memos: []},
               {name: '12PM', memos: []}
-            ]
-          },
+            ],
           Week: [
             {name: 'Monday', date: '', times: []},
             {name: 'Tuesday', date: '', times: []},
@@ -197,6 +164,17 @@ const App = React.createClass({
       currentCal: e
     });
   },
+  select(e){
+    if(this.state.selected === e){
+      this.setState({
+        selected: null
+      });
+    } else {
+      this.setState({
+        selected: e
+      });
+    }
+  },
   render() {
     return (
       <div className="App">
@@ -207,7 +185,8 @@ const App = React.createClass({
         <div className='app-container'>
           <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
           <Calendar currentCal={this.state.currentCal}
-          calObjects={this.state.calObjects} />
+          calObjects={this.state.calObjects}
+          selected={this.state.selected} select={this.select}/>
         </div>
       </div>
     );
