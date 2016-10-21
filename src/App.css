@@ -97,3 +97,31 @@
   box-shadow: 2.5px 2.5px 1px #888888;
   padding: 5px;
 }
+
+/* modal */
+.popUp {
+  position: absolute;
+  z-index: 2;
+  background: white;
+}
+.modal-anim-enter {
+    opacity: 0.00;
+    transform: scale(0.7);
+    transition: all 0.2s;
+}
+
+.modal-anim-enter.modal-anim-enter-active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.modal-anim-leave {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.2s;
+}
+
+.modal-anim-leave.modal-anim-leave-active {
+    opacity: 0.00;
+    transform: scale(0.7);
+}

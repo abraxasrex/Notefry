@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+import Modal from 'react-modal';
 
 const NavPill = React.createClass({
   render () {
@@ -155,7 +155,9 @@ const App = React.createClass({
             {name: 'October', days: []},
             {name: 'November', days: []},
             {name: 'December', days: []}
-          ]
+          ],
+          // non-calenda-bootstrap props //
+          modalIsOpen: false
         }
     };
   },
@@ -175,18 +177,71 @@ const App = React.createClass({
       });
     }
   },
+  openModal: function() {
+   this.setState({modalIsOpen: true});
+  },
+  afterOpenModal: function() {
+  // references are now sync'd and can be accessed.
+    this.refs.subtitle.style.color = '#f00';
+  },
+  closeModal: function() {
+    this.setState({modalIsOpen: false});
+  },
   render() {
+    let popUpStyles = {
+      overlay : {
+        position          : 'fixed',
+        top               : 0,
+        left              : 0,
+        right             : 0,
+        bottom            : 0,
+        backgroundColor   : 'rgba(255, 255, 255, 0.75)'
+      },
+      content : {
+        position                   : 'absolute',
+        top                        : '40px',
+        left                       : '20px',
+        right                      : '20px',
+        bottom                     : '20px',
+        border                     : '1px solid #ccc',
+        background                 : 'rgb(240, 255, 255)',
+        overflow                   : 'auto',
+        WebkitOverflowScrolling    : 'touch',
+        borderRadius               : '2.5px',
+        outline                    : 'none',
+        padding                    : '5px'
+      }
+    };
     return (
       <div className="App">
         <div className="App-header">
         <h1>Notifry</h1>
-        <h5>New Note</h5>
+        <button onClick={this.openModal}><h5>New Note</h5></button>
         </div>
         <div className='app-container'>
           <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
           <Calendar currentCal={this.state.currentCal}
           calObjects={this.state.calObjects}
           selected={this.state.selected} select={this.select}/>
+
+          <Modal
+            isOpen={this.state.modalIsOpen}
+            onAfterOpen={this.afterOpenModal}
+            onRequestClose={this.closeModal}
+            style={popUpStyles}
+            contentLabel="Example Modal"
+          >
+            <h2 ref="subtitle">New Note</h2>
+            <button onClick={this.closeModal}>close</button>
+            <form>
+              <input />
+              {/* <button>tab navigation</button>
+              <button>stays</button>
+              <button>inside</button>
+              <button>the modal</button> */}
+            </form>
+          </Modal>
+
         </div>
       </div>
     );
