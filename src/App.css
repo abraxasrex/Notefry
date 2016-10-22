@@ -56,7 +56,8 @@
   padding: 5px;
   background: #FFA07A;
   border: 0.5px solid black;
-  transition: all 0.05s;
+  transition: background 0.5s;
+  overflow: scroll;
 }
 
 .popuppanel {
@@ -77,6 +78,9 @@
   width: 30%;
 }
 
+.memo {
+  border: 0.5px solid black;
+}
 /* nav view */
 
 .nav-full {

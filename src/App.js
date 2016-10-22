@@ -35,7 +35,9 @@ const Panel = React.createClass({
     return (
       <div className={panelClasses}
         style={  (this.props.selected === this.props.propKey) ? {background: hilite} : {background: normal}}
-        onClick={() => this.props.select(this.props.propKey) }>
+        onClick={() => this.props.select(this.props.propKey) } >
+         {this.props.memoText || ''}
+        <div className='littleBox' onClick={() => this.props.openModal(this.props.propKey)}>+</div>
         {this.props.calName || 'not set'}
       </div>
     );
@@ -51,12 +53,20 @@ const Calendar = React.createClass({
       <div className='cal-container' style={{background:'#F0FFFF'}}>
         {
             calResults.map(function(obj, i){
+              let memoText;
+              obj["memos"].length ? (memoText = obj["memos"].reduce(function(a, b){return a + b;})) : (memoText = '');
+
               return <Panel className='panel-fluid' key={i + '_' + obj.name + '_' + calProps.currentCal}
               propKey={i + '_' + obj.name + '_' + calProps.currentCal}
               currentCal={calProps.currentCal} calName={obj.name}
-              selected={calProps.selected} select={calProps.select}/>
+              selected={calProps.selected} select={calProps.select}
+              openModal={calProps.openModal}
+              openNoteId={calProps.openNoteId} openNoteMsg={calProps.openNoteMsg}
+              allMemos={calProps.allMemos}
+              checkMemo={calProps.checkMemo}
+              memoText={ memoText} />
             })
-        }
+       }
       </div>
     );
   }
@@ -72,6 +82,7 @@ const App = React.createClass({
           'Month': 30,
           'Year': 12
         ],
+        allMemos: [],
         calObjects: {
             Day: [
               {name: '1AM', memos: []},
@@ -100,64 +111,66 @@ const App = React.createClass({
               {name: '12PM', memos: []}
             ],
           Week: [
-            {name: 'Monday', date: '', times: []},
-            {name: 'Tuesday', date: '', times: []},
-            {name: 'Wednesday', date: '', times: []},
-            {name: 'Thursday', date: '', times: []},
-            {name: 'Friday', date: '', times: []},
-            {name: 'Saturday', date: '', times: []},
-            {name: 'Sunday', date: '', times: []}
+            {name: 'Monday', date: '', memos: []},
+            {name: 'Tuesday', date: '', memos: []},
+            {name: 'Wednesday', date: '', memos: []},
+            {name: 'Thursday', date: '', memos: []},
+            {name: 'Friday', date: '', memos: []},
+            {name: 'Saturday', date: '', memos: []},
+            {name: 'Sunday', date: '', memos: []}
           ],
           Month: [
-            {name:1,times:[]},
-            {name:2,times:[]},
-            {name:3,times:[]},
-            {"name":4,"times":[]},
-            {"name":5,"times":[]},
-            {"name":6,"times":[]},
-            {"name":7,"times":[]},
-            {"name":8,"times":[]},
-            {"name":9,"times":[]},
-            {"name":10,"times":[]},
-            {"name":11,"times":[]},
-            {"name":12,"times":[]},
-            {"name":13,"times":[]},
-            {"name":14,"times":[]},
-            {"name":15,"times":[]},
-            {"name":16,"times":[]},
-            {"name":17,"times":[]},
-            {"name":18,"times":[]},
-            {"name":19,"times":[]},
-            {"name":20,"times":[]},
-            {"name":21,"times":[]},
-            {"name":22,"times":[]},
-            {"name":23,"times":[]},
-            {"name":24,"times":[]},
-            {"name":25,"times":[]},
-            {"name":26,"times":[]},
-            {"name":27,"times":[]},
-            {"name":28,"times":[]},
-            {"name":29,"times":[]},
-            {"name":30,"times":[]},
-            {"name":31,"times":[]},
-            {"name":'',"times":[]}
+            {name:1,memos:[]},
+            {name:2,memos:[]},
+            {name:3,memos:[]},
+            {"name":4,"memos":[]},
+            {"name":5,"memos":[]},
+            {"name":6,"memos":[]},
+            {"name":7,"memos":[]},
+            {"name":8,"memos":[]},
+            {"name":9,"memos":[]},
+            {"name":10,"memos":[]},
+            {"name":11,"memos":[]},
+            {"name":12,"memos":[]},
+            {"name":13,"memos":[]},
+            {"name":14,"memos":[]},
+            {"name":15,"memos":[]},
+            {"name":16,"memos":[]},
+            {"name":17,"memos":[]},
+            {"name":18,"memos":[]},
+            {"name":19,"memos":[]},
+            {"name":20,"memos":[]},
+            {"name":21,"memos":[]},
+            {"name":22,"memos":[]},
+            {"name":23,"memos":[]},
+            {"name":24,"memos":[]},
+            {"name":25,"memos":[]},
+            {"name":26,"memos":[]},
+            {"name":27,"memos":[]},
+            {"name":28,"memos":[]},
+            {"name":29,"memos":[]},
+            {"name":30,"memos":[]},
+            {"name":31,"memos":[]},
+            {"name":'',"memos":[]}
           ],
           Year: [
-            {name: 'January', days: []},
-            {name: 'February', days: []},
-            {name: 'March', days: []},
-            {name: 'April', days: []},
-            {name: 'May', days: []},
-            {name: 'June', days: []},
-            {name: 'July', days: []},
-            {name: 'August', days: []},
-            {name: 'September', days: []},
-            {name: 'October', days: []},
-            {name: 'November', days: []},
-            {name: 'December', days: []}
+            {name: 'January', memos: []},
+            {name: 'February', memos: []},
+            {name: 'March', memos: []},
+            {name: 'April', memos: []},
+            {name: 'May', memos: []},
+            {name: 'June', memos: []},
+            {name: 'July', memos: []},
+            {name: 'August', memos: []},
+            {name: 'September', memos: []},
+            {name: 'October', memos: []},
+            {name: 'November', memos: []},
+            {name: 'December', memos: []}
           ],
           // non-calenda-bootstrap props //
-          modalIsOpen: false
+          modalIsOpen: false,
+          openNoteId: '',
+          opneNoteMsg: null
         }
     };
   },
@@ -177,15 +190,48 @@ const App = React.createClass({
       });
     }
   },
-  openModal: function() {
+  openModal: function(panelKey) {
    this.setState({modalIsOpen: true});
+   if(!!panelKey){
+     console.log(panelKey);
+     this.setState({openNoteId: panelKey});
+   }
   },
   afterOpenModal: function() {
-  // references are now sync'd and can be accessed.
     this.refs.subtitle.style.color = '#f00';
   },
   closeModal: function() {
     this.setState({modalIsOpen: false});
+    this.setState({openNoteId: ''});
+  },
+  changeOpenId(e){
+    e.preventDefault();
+    this.setState({openNoteId: e.target.value});
+  },
+  changeOpenMsg(e){
+    e.preventDefault();
+    this.setState({openNoteMsg: e.target.value});
+  },
+  submitMemo(e){
+    e.preventDefault();
+    let memo = {id: this.state.openNoteId, text: this.state.openNoteMsg};
+    let name = this.state.openNoteId.split('_')[1];
+    //push it (and render it in the panel later)
+    //console.log('objects: ', this.state.calObjects, 'current callendar: ', this.state.currentCal);
+    this.state.calObjects[this.state.currentCal].forEach(function(obj){
+      if(obj.name === name){
+        obj.memos.push(memo.text);
+      }
+    });
+    //console.log('memos: ', this.state.allMemos);
+    this.closeModal();
+  },
+  checkMemo(id){
+    this.state.allMemos.forEach(function(memo){
+      if(memo.id === id){
+        return memo.text;
+      }
+    })
   },
   render() {
     let popUpStyles = {
@@ -216,30 +262,35 @@ const App = React.createClass({
       <div className="App">
         <div className="App-header">
         <h1>Notifry</h1>
-        <button onClick={this.openModal}><h5>New Note</h5></button>
-        </div>
+        <button onClick={() => this.openModal(false)}><h5>New Note</h5></button>
+      </div>
         <div className='app-container'>
           <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
+
           <Calendar currentCal={this.state.currentCal}
-          calObjects={this.state.calObjects}
-          selected={this.state.selected} select={this.select}/>
+            calObjects={this.state.calObjects}
+            selected={this.state.selected} select={this.select}
+            openModal={this.openModal}
+            openNoteId={this.state.openNoteId} openNoteMsg={this.state.openNoteMsg}
+            allMemos={this.state.allMemos} checkMemo={this.checkMemo}/>
 
           <Modal
             isOpen={this.state.modalIsOpen}
             onAfterOpen={this.afterOpenModal}
             onRequestClose={this.closeModal}
             style={popUpStyles}
-            contentLabel="Example Modal"
-          >
-            <h2 ref="subtitle">New Note</h2>
-            <button onClick={this.closeModal}>close</button>
-            <form>
-              <input />
-              {/* <button>tab navigation</button>
-              <button>stays</button>
-              <button>inside</button>
-              <button>the modal</button> */}
-            </form>
+            contentLabel="Example Modal">
+              <h2 ref="subtitle">New Note</h2>
+              <button onClick={this.closeModal}>close</button>
+              <form>
+                <label>note msg:</label>
+                <input onChange={this.changeOpenMsg} value={this.state.openNoteMsg}/>
+                <br />
+                <label>date:</label>
+                <input onChange={this.changeOpenId} value={this.state.openNoteId}/>
+                <br />
+                <button onClick={this.submitMemo}>Save your memo</button>
+              </form>
           </Modal>
 
         </div>
