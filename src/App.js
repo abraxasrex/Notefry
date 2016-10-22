@@ -1,7 +1,18 @@
 import React from 'react';
 import './App.css';
 import Modal from 'react-modal';
+import Annyang from 'annyang';
 
+var speech;
+
+Annyang.addCallback('result', function(userSaid){
+  speech = speech + userSaid;
+  console.log('user said:', userSaid);
+});
+
+Annyang.start();
+
+Annyang.start();
 const NavPill = React.createClass({
   render () {
     return <div className='nav-partial' style={this.props.style}
@@ -23,11 +34,6 @@ const Nav = React.createClass ({
 });
 
 const Panel = React.createClass({
-  getInitialState: function() {
-    return {
-      selected: false
-    };
-  },
   render() {
      let panelClasses = 'cal-panel ' + this.props.currentCal + '-cal-panel';
      let hilite  = '#FF8C00';
@@ -51,6 +57,8 @@ const Calendar = React.createClass({
     /* return panels */
     return (
       <div className='cal-container' style={{background:'#F0FFFF'}}>
+      <h3> Annyang Test: </h3>
+      <p> userSaid: {speech} </p>
         {
             calResults.map(function(obj, i){
               let memoText;
@@ -62,7 +70,6 @@ const Calendar = React.createClass({
               selected={calProps.selected} select={calProps.select}
               openModal={calProps.openModal}
               openNoteId={calProps.openNoteId} openNoteMsg={calProps.openNoteMsg}
-              allMemos={calProps.allMemos}
               checkMemo={calProps.checkMemo}
               memoText={ memoText} />
             })
@@ -203,6 +210,7 @@ const App = React.createClass({
   closeModal: function() {
     this.setState({modalIsOpen: false});
     this.setState({openNoteId: ''});
+    this.setState({openNoteMsg: ''});
   },
   changeOpenId(e){
     e.preventDefault();
@@ -272,7 +280,7 @@ const App = React.createClass({
             selected={this.state.selected} select={this.select}
             openModal={this.openModal}
             openNoteId={this.state.openNoteId} openNoteMsg={this.state.openNoteMsg}
-            allMemos={this.state.allMemos} checkMemo={this.checkMemo}/>
+            checkMemo={this.checkMemo}/>
 
           <Modal
             isOpen={this.state.modalIsOpen}
