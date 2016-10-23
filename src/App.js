@@ -3,16 +3,9 @@ import './App.css';
 import Modal from 'react-modal';
 import Annyang from 'annyang';
 
+//user speech var
 var speech;
 
-Annyang.addCallback('result', function(userSaid){
-  speech = speech + userSaid;
-  console.log('user said:', userSaid);
-});
-
-Annyang.start();
-
-Annyang.start();
 const NavPill = React.createClass({
   render () {
     return <div className='nav-partial' style={this.props.style}
@@ -80,6 +73,20 @@ const Calendar = React.createClass({
 });
 
 const App = React.createClass({
+  componentWillMount() {
+    var commands = {
+      'add note': function() {
+        this.openModal();
+       },
+      'save note': function(){
+          this.closeModal();
+      },
+      'cancel note': function(){
+          this.saveMemo();
+      }
+    };
+    Annyang.addCommands(commands);
+  },
   getInitialState() {
     return {
         currentCal: 'Week',
@@ -220,19 +227,19 @@ const App = React.createClass({
     e.preventDefault();
     this.setState({openNoteMsg: e.target.value});
   },
-  submitMemo(e){
-    e.preventDefault();
+  saveMemo(){
     let memo = {id: this.state.openNoteId, text: this.state.openNoteMsg};
     let name = this.state.openNoteId.split('_')[1];
-    //push it (and render it in the panel later)
-    //console.log('objects: ', this.state.calObjects, 'current callendar: ', this.state.currentCal);
     this.state.calObjects[this.state.currentCal].forEach(function(obj){
       if(obj.name === name){
         obj.memos.push(memo.text);
       }
     });
-    //console.log('memos: ', this.state.allMemos);
     this.closeModal();
+  },
+  submitMemo(e){
+    e.preventDefault();
+    this.saveMemo();
   },
   checkMemo(id){
     this.state.allMemos.forEach(function(memo){
@@ -306,5 +313,13 @@ const App = React.createClass({
     );
   }
 });
+
+
+Annyang.addCallback('result', function(userSaid){
+  speech = speech + userSaid;
+  console.log('user said:', userSaid);
+});
+
+Annyang.start();
 
 export default App;
