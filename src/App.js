@@ -5,6 +5,31 @@ import Annyang from 'annyang';
 
 //user speech var
 var speech;
+//var commands;
+function setCommands(commands){
+  Annyang.addCommands(commands);
+}
+
+var commands = {
+  'add': function() {
+    alert('add!');
+  //  ctx.openModal();
+   },
+  'save': function(){
+    //  ctx.closeModal();
+  },
+  'cancel': function(){
+  //    ctx.saveMemo();
+  }
+};
+Annyang.addCommands(commands);
+
+Annyang.addCallback('result', function(userSaid){
+  speech = speech + userSaid;
+  console.log('user said:', userSaid);
+});
+
+Annyang.start();
 
 const NavPill = React.createClass({
   render () {
@@ -73,19 +98,20 @@ const Calendar = React.createClass({
 });
 
 const App = React.createClass({
-  componentWillMount() {
-    var commands = {
-      'add note': function() {
-        this.openModal();
-       },
-      'save note': function(){
-          this.closeModal();
-      },
-      'cancel note': function(){
-          this.saveMemo();
-      }
-    };
-    Annyang.addCommands(commands);
+  componentDidMount() {
+    // var ctx = this;
+    // var commands = {
+    //   'add note': function() {
+    //     ctx.openModal();
+    //    },
+    //   'save note': function(){
+    //       ctx.closeModal();
+    //   },
+    //   'cancel note': function(){
+    //       ctx.saveMemo();
+    //   }
+    // };
+    // setCommands(commands);
   },
   getInitialState() {
     return {
@@ -314,12 +340,8 @@ const App = React.createClass({
   }
 });
 
+//
 
-Annyang.addCallback('result', function(userSaid){
-  speech = speech + userSaid;
-  console.log('user said:', userSaid);
-});
 
-Annyang.start();
 
 export default App;
