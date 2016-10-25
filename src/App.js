@@ -1,14 +1,33 @@
 import React from 'react';
 import './App.css';
 import Modal from 'react-modal';
+import SubComponents from './SubComponents.js';
 import Annyang from 'annyang';
+import Bootstrap from './Bootstrap.js';
+import Moment from 'moment'
 
+var moments = [];
+//foo = new moment(something).add(10, 'm').toDate();
+function  getAllHours() {
+  var now = new Date();
+  var then = Moment(now).add(6, 'month').toDate();
+  while(then > now){
+    moments.push({date: new Date(then), memos: []});
+    then = Moment(then).subtract(1, 'hour').toDate();
+  }
+  console.log('moments: ', moments);
+  console.log('then: ', then);
+}
+
+//sub components
+const Panel = SubComponents.Panel;
+const Nav = SubComponents.Nav;
 //user speech var
 var speech;
 //var commands;
-function setCommands(commands){
-  Annyang.addCommands(commands);
-}
+// function setCommands(commands){
+//   Annyang.addCommands(commands);
+// }
 
 var commands = {
   'add': function() {
@@ -16,65 +35,43 @@ var commands = {
   //  ctx.openModal();
    },
   'save': function(){
+    alert('save!');
     //  ctx.closeModal();
   },
   'cancel': function(){
   //    ctx.saveMemo();
+  alert('cancel!');
   }
 };
+
 Annyang.addCommands(commands);
 
 Annyang.addCallback('result', function(userSaid){
-  speech = speech + userSaid;
+  speech += userSaid;
   console.log('user said:', userSaid);
 });
 
 Annyang.start();
 
-const NavPill = React.createClass({
-  render () {
-    return <div className='nav-partial' style={this.props.style}
-      onClick={() => this.props.setCal(this.props.pillName)}>
-      {this.props.pillName}
-    </div>
-  }
-});
-
-const Nav = React.createClass ({
-  render () {
-    return <div className='nav-full'>
-      <NavPill className='nav-partial' style={{background: '#FFA07A'}} pillName='Day' setCal={this.props.setCal}/>
-      <NavPill className='nav-partial' style={{background: '#FF7F50'}} pillName='Week' setCal={this.props.setCal}/>
-      <NavPill className='nav-partial' style={{background: '#FF8C00'}} pillName='Month' setCal={this.props.setCal}/>
-      <NavPill className='nav-partial' style={{background: '#FFA500'}} pillName='Year' setCal={this.props.setCal}/>
-    </div>
-  }
-});
-
-const Panel = React.createClass({
-  render() {
-     let panelClasses = 'cal-panel ' + this.props.currentCal + '-cal-panel';
-     let hilite  = '#FF8C00';
-     let normal = '#FFA07A';
-    return (
-      <div className={panelClasses}
-        style={  (this.props.selected === this.props.propKey) ? {background: hilite} : {background: normal}}
-        onClick={() => this.props.select(this.props.propKey) } >
-         {this.props.memoText || ''}
-        <div className='littleBox' onClick={() => this.props.openModal(this.props.propKey)}>+</div>
-        {this.props.calName || 'not set'}
-      </div>
-    );
-  }
-});
-
 const Calendar = React.createClass({
+  getDayView(){
+
+  },
+  getWeekView(){
+
+  },
+  getMonthView(){
+
+  },
+  getYearView(){
+
+  },
   render() {
     let calProps = this.props;
     let calResults = calProps.calObjects[calProps.currentCal];
-    /* return panels */
     return (
       <div className='cal-container' style={{background:'#F0FFFF'}}>
+      {/* voice test */}
       <h3> Annyang Test: </h3>
       <p> userSaid: {speech} </p>
         {
@@ -84,10 +81,13 @@ const Calendar = React.createClass({
 
               return <Panel className='panel-fluid' key={i + '_' + obj.name + '_' + calProps.currentCal}
               propKey={i + '_' + obj.name + '_' + calProps.currentCal}
-              currentCal={calProps.currentCal} calName={obj.name}
-              selected={calProps.selected} select={calProps.select}
+              currentCal={calProps.currentCal}
+              calName={obj.name}
+              selected={calProps.selected}
+              select={calProps.select}
               openModal={calProps.openModal}
-              openNoteId={calProps.openNoteId} openNoteMsg={calProps.openNoteMsg}
+              openNoteId={calProps.openNoteId}
+              openNoteMsg={calProps.openNoteMsg}
               checkMemo={calProps.checkMemo}
               memoText={ memoText} />
             })
@@ -99,120 +99,12 @@ const Calendar = React.createClass({
 
 const App = React.createClass({
   componentDidMount() {
-    // var ctx = this;
-    // var commands = {
-    //   'add note': function() {
-    //     ctx.openModal();
-    //    },
-    //   'save note': function(){
-    //       ctx.closeModal();
-    //   },
-    //   'cancel note': function(){
-    //       ctx.saveMemo();
-    //   }
-    // };
-    // setCommands(commands);
+    console.log('mounted component');
   },
   getInitialState() {
-    return {
-        currentCal: 'Week',
-        calCounts: [
-          'Day': 24,
-          'Week': 7,
-          'Month': 30,
-          'Year': 12
-        ],
-        allMemos: [],
-        calObjects: {
-            Day: [
-              {name: '1AM', memos: []},
-              {name: '2AM', memos: []},
-              {name: '3AM', memos: []},
-              {name: '4AM', memos: []},
-              {name: '5AM', memos: []},
-              {name: '6AM', memos: []},
-              {name: '7AM', memos: []},
-              {name: '8AM', memos: []},
-              {name: '9AM', memos: []},
-              {name: '10AM', memos: []},
-              {name: '11AM', memos: []},
-              {name: '12AM', memos: []},
-              {name: '1PM', memos: []},
-              {name: '2PM', memos: []},
-              {name: '3PM', memos: []},
-              {name: '4PM', memos: []},
-              {name: '5PM', memos: []},
-              {name: '6PM', memos: []},
-              {name: '7PM', memos: []},
-              {name: '8PM', memos: []},
-              {name: '9PM', memos: []},
-              {name: '10PM', memos: []},
-              {name: '11PM', memos: []},
-              {name: '12PM', memos: []}
-            ],
-          Week: [
-            {name: 'Monday', date: '', memos: []},
-            {name: 'Tuesday', date: '', memos: []},
-            {name: 'Wednesday', date: '', memos: []},
-            {name: 'Thursday', date: '', memos: []},
-            {name: 'Friday', date: '', memos: []},
-            {name: 'Saturday', date: '', memos: []},
-            {name: 'Sunday', date: '', memos: []}
-          ],
-          Month: [
-            {name:1,memos:[]},
-            {name:2,memos:[]},
-            {name:3,memos:[]},
-            {"name":4,"memos":[]},
-            {"name":5,"memos":[]},
-            {"name":6,"memos":[]},
-            {"name":7,"memos":[]},
-            {"name":8,"memos":[]},
-            {"name":9,"memos":[]},
-            {"name":10,"memos":[]},
-            {"name":11,"memos":[]},
-            {"name":12,"memos":[]},
-            {"name":13,"memos":[]},
-            {"name":14,"memos":[]},
-            {"name":15,"memos":[]},
-            {"name":16,"memos":[]},
-            {"name":17,"memos":[]},
-            {"name":18,"memos":[]},
-            {"name":19,"memos":[]},
-            {"name":20,"memos":[]},
-            {"name":21,"memos":[]},
-            {"name":22,"memos":[]},
-            {"name":23,"memos":[]},
-            {"name":24,"memos":[]},
-            {"name":25,"memos":[]},
-            {"name":26,"memos":[]},
-            {"name":27,"memos":[]},
-            {"name":28,"memos":[]},
-            {"name":29,"memos":[]},
-            {"name":30,"memos":[]},
-            {"name":31,"memos":[]},
-            {"name":'',"memos":[]}
-          ],
-          Year: [
-            {name: 'January', memos: []},
-            {name: 'February', memos: []},
-            {name: 'March', memos: []},
-            {name: 'April', memos: []},
-            {name: 'May', memos: []},
-            {name: 'June', memos: []},
-            {name: 'July', memos: []},
-            {name: 'August', memos: []},
-            {name: 'September', memos: []},
-            {name: 'October', memos: []},
-            {name: 'November', memos: []},
-            {name: 'December', memos: []}
-          ],
-          // non-calenda-bootstrap props //
-          modalIsOpen: false,
-          openNoteId: '',
-          opneNoteMsg: null
-        }
-    };
+    //return Bootstrap;
+    getAllHours();
+    return moments;
   },
   setCal (e) {
     this.setState({
@@ -333,7 +225,6 @@ const App = React.createClass({
                 <button onClick={this.submitMemo}>Save your memo</button>
               </form>
           </Modal>
-
         </div>
       </div>
     );
@@ -341,7 +232,6 @@ const App = React.createClass({
 });
 
 //
-
 
 
 export default App;
