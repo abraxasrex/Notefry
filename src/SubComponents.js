@@ -22,7 +22,7 @@ const Nav = React.createClass ({
 
 const Panel = React.createClass({
   render() {
-     let panelClasses = 'cal-panel ' + this.props.currentCal + '-cal-panel';
+     let panelClasses = 'cal-panel ' + this.props.currentCal.type + '-cal-panel';
      let hilite  = '#FF8C00';
      let normal = '#FFA07A';
     return (
@@ -31,7 +31,7 @@ const Panel = React.createClass({
         onClick={() => this.props.select(this.props.propKey) } >
          {this.props.memoText || ''}
         <div className='littleBox' onClick={() => this.props.openModal(this.props.propKey)}>+</div>
-        {this.props.calName || 'not set'}
+        {this.props.time || 'not set'}
       </div>
     );
   }
@@ -47,5 +47,5 @@ const Panel = React.createClass({
 //3. generate Week view --> have each day Panel 1. calculate last monday and next sunday, 2. render name of day (hardcoded) and memos matching that date
 //4. generate Month view --> have each day Panel 1. find number of days in month and display them, 2. render moment array memos matching date
 //5. generate Months view --> have each day Panel 1. generate month names between 'now' and 'then' objects,  2. get memos matching their respective month
-//6. for Day and Week: Next and Back buttons should add or subtract the date or the week for their view  and repeat theri render process  
+//6. for Day and Week: Next and Back buttons should add or subtract the date or the week for their view  and repeat theri render process
 export default {Nav: Nav, Panel: Panel}

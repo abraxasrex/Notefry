@@ -65,19 +65,23 @@ const Calendar = React.createClass({
     }
   },
   render() {
-    // let calProps = this.props;
-    // let calResults = calProps.calObjects[calProps.currentCal];
+    let calProps = this.props;
+    var calMap = calProps.calendarObjects;
     return (
       <div className='cal-container' style={{background:'#F0FFFF'}}>
         {
-            this.props.calendarObjects.map(function(obj, i){
+            calMap.map(function(obj, i){
+              //accepts obj.time, obj.memos
               let memoText;
-              // obj["memos"].length ? (memoText = obj["memos"].reduce(function(a, b){return a + b;})) : (memoText = '');
+              obj.memos.length ? (memoText = obj.memos.reduce(function(a, b){return a + b;})) : (memoText = '');
 
-              return <Panel className='panel-fluid' key={i + '_' + obj.name + '_' + this.props.currentCal.type}
-              propKey={i + '_' + obj.name + '_' + this.props.currentCal.type}
-              currentCal={this.props.currentCal.type}
-              calName={obj.name}
+              return <Panel className='panel-fluid' key={i + '_' + obj.name + '_' + calProps.currentCal.type}
+              propKey={i + '_' + obj.name + '_' + calProps.currentCal.type}
+              currentCal={calProps.currentCal.type}
+              //calName={obj.name}
+              time ={obj.time}
+              // ^ 1. 1-24 dates, 2. Weekday, 3. day name, 4. month name
+              // calTitle
               selected={calProps.selected}
               select={calProps.select}
               openModal={calProps.openModal}
@@ -120,7 +124,7 @@ const App = React.createClass({
     var today = this.state.currentCal.start.getDay();
 
     var date = this.state.currentCal.start.getDate();
-    var month - this.state.currentCal.start.getMonth();
+    var month = this.state.currentCal.start.getMonth();
 
     let hourObjs = [];
 
@@ -214,7 +218,7 @@ const App = React.createClass({
         });
       }
       yearMonths.push({time: month.getMonth()}, {memos: memos});
-      month = Moment(today).add(1, 'month').toDate();
+      month = Moment(month).add(1, 'month').toDate();
     }
      return yearMonths;
     // {month, memos}
