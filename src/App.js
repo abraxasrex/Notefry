@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import Modal from 'react-modal';
+import update from 'immutability-helper';
 import SubComponents from './SubComponents.js';
 import Annyang from 'annyang';
 import Bootstrap from './Bootstrap.js';
@@ -53,25 +54,15 @@ Annyang.start();
 //////////////////////////////////////////////////////////
 
 const Calendar = React.createClass({
-  componentWillMount(){
-    if(this.props.currentCal.type === 'Day'){
-      this.props.calendarObjects = this.props.getDayView();
-    } else if(this.props.currentCal.type === 'Week'){
-      this.props.calendarObjects = this.props.getWeekView();
-    } else if(this.props.currentCal.type === 'Month'){
-      this.props.calendarObjects = this.props.getMonthView();
-    } else if(this.props.currentCal.type === 'Year'){
-      this.props.calendarObjects = this.props.getYearView();
-    }
-  },
   render() {
     let calProps = this.props;
-    var calMap = calProps.calendarObjects;
+    var calMap = this.props.calendarObjects;
     return (
       <div className='cal-container' style={{background:'#F0FFFF'}}>
         {
             calMap.map(function(obj, i){
               //accepts obj.time, obj.memos
+            //  console.log('obj is... ', obj);
               let memoText;
               obj.memos.length ? (memoText = obj.memos.reduce(function(a, b){return a + b;})) : (memoText = '');
 
@@ -166,7 +157,7 @@ const App = React.createClass({
       }
 
       weekDays.push({
-        time: today.format('dddd'),
+        time: Moment(today).format('dddd'),
         memos: memos
       });
       today = new Moment(today).add(1, 'day').toDate();
@@ -203,9 +194,11 @@ const App = React.createClass({
   getYearView(){
     var yearMonths = [];
     var month = this.state.currentCal.start;
-    for(var i = 0; i < 6; i++){
-      let year = month.getYear();
-      let month;
+        //  console.log('month is.... ', month.getMonth());
+    for(let i = 0; i < 6; i++){
+
+      //var year = month.getFullYear();
+      //let month;
       let memos = [];
       //get memos
       if(this.state.memos.length){
@@ -217,28 +210,50 @@ const App = React.createClass({
           }
         });
       }
-      yearMonths.push({time: month.getMonth()}, {memos: memos});
+      yearMonths.push({time: month.getMonth(), memos: memos});
       month = Moment(month).add(1, 'month').toDate();
     }
      return yearMonths;
     // {month, memos}
   },
-  getInitialState() {
-    // 1. hours from now: Moments = [{times}]
-    // 2. memos = [{day: x, month: y, hour: z, memos: []]
-    // 3. this.currentCal = [{start: now(?), type: 'Week Day Month']
+  // 1. hours from now: Moments = [{times}]
+  // 2. memos = [{day: x, month: y, hour: z, memos: []]
+  // 3. this.currentCal = [{start: now(?), type: 'Week Day Month']
+  getInitialState()  {
     let memos = [];
-    return { currentCal: {start: new Date(), type: 'Day'},
+    //var bootstrapDays = this.getDayView();
+    //console.log(' these days are .... ', bootstrapDays);
+    return { currentCal: {start: new Date(), type: 'Year'},
+    calendarObjects: [],
       modalIsOpen: false,
       openNoteId: '',
       openNoteMsg: null,
       memos: memos
     };
   },
-  setCal (e) {
+  componentWillMount(){
+    let bootstrapDays = this.getDayView();
     this.setState({
-      currentCal: e
+      calendarObjects: bootstrapDays
+    })
+  },
+  setCal (e) {
+  //   items: update(this.state.items, {1: {name: {$set: 'updated field name'}}})
+
+    this.setState({
+      currentCal: update(this.state.currentCal, {'type': {$set: e}})
     });
+
+    if(e === 'Day'){
+      this.state.calendarObjects = this.getDayView();
+    } else if(e === 'Week'){
+      this.state.calendarObjects = this.getWeekView();
+    } else if(e === 'Month'){
+      this.state.calendarObjects = this.getMonthView();
+    } else if(e === 'Year'){
+      this.state.calendarObjects = this.getYearView();
+    }
+
   },
   select(e){
     if(this.state.selected === e){
@@ -277,6 +292,9 @@ const App = React.createClass({
   saveMemo(){
     let memo = {id: this.state.openNoteId, text: this.state.openNoteMsg};
     let name = this.state.openNoteId.split('_')[1];
+        // 2. memos = [{day: x, month: y, hour: z, memos: []]
+        // this.state.memos
+        //
     this.state.calObjects[this.state.currentCal].forEach(function(obj){
       if(obj.name === name){
         obj.memos.push(memo.text);
@@ -336,7 +354,7 @@ const App = React.createClass({
             openModal={this.openModal}
             openNoteId={this.state.openNoteId} openNoteMsg={this.state.openNoteMsg}
             checkMemo={this.checkMemo}
-            calendarObjects={[]}
+            calendarObjects={this.state.calendarObjects}
             getDayView={this.getDayView} getWeekView={this.getWeekView} getMonthView={this.getMonthView} getYearView={this.getYearView}/>
 
           <Modal
