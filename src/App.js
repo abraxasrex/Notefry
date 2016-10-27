@@ -237,6 +237,16 @@ const App = React.createClass({
     this.setState({modalIsOpen: false});
     this.setState({openNoteId: ''});
     this.setState({openNoteMsg: ''});
+
+    if(this.state.currentCal === 'Day'){
+      this.state.calendarObjects = this.getDayView();
+    } else if(this.state.currentCal === 'Week'){
+      this.state.calendarObjects = this.getWeekView();
+    } else if(this.state.currentCal === 'Month'){
+      this.state.calendarObjects = this.getMonthView();
+    } else if(this.state.currentCal === 'Year'){
+      this.state.calendarObjects = this.getYearView();
+    }
   },
   changeOpenId(e){
     e.preventDefault();
