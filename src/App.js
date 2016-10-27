@@ -7,8 +7,8 @@ import Annyang from 'annyang';
 import Bootstrap from './Bootstrap.js';
 import Moment from 'moment';
 //sub components
-const Panel = SubComponents.Panel;
 const Nav = SubComponents.Nav;
+const Calendar = SubComponents.Calendar;
 
 /// annyang methods ////////////////////////////////////////////////////
 var speech;
@@ -38,35 +38,18 @@ Annyang.start();
 
 //////////////////////////////////////////////////////////
 
-const Calendar = React.createClass({
-  render() {
-    let calProps = this.props;
-  //  var calMap = this.props.calendarObjects;
-    return (
-      <div className='cal-container' style={{background:'#F0FFFF'}}>
-        {
-            calProps.calendarObjects.map(function(obj, i){
-              let memoText;
-              obj.memos.length ? (memoText = obj.memos.reduce(function(a, b){return a +  ', ' + b;})) : (memoText = '');
-              return <Panel className='panel-fluid' key={obj.time}
-              propKey={obj.time}
-              currentCal={calProps.currentCal}
-              display ={obj.display}
-              selected={calProps.selected}
-              select={calProps.select}
-              openModal={calProps.openModal}
-              openNoteId={calProps.openNoteId}
-              openNoteMsg={calProps.openNoteMsg}
-              checkMemo={calProps.checkMemo}
-              memoText={ memoText} />
-            })
-       }
-      </div>
-    );
-  }
-});
-
 const App = React.createClass({
+  getCalView(cur){
+    if(cur === 'Day'){
+      return this.getDayView();
+    } else if(cur === 'Week'){
+      return this.getWeekView();
+    } else if(cur === 'Month'){
+      return this.getMonthView();
+    } else if(cur === 'Year'){
+      return this.getYearView();
+    }
+  },
   nextCalView(){
     if(this.state.currentCal.type === 'Day'){
       this.state.currentCal.start = new Moment(this.state.currentCal.start).add(1, 'day').toDate();
@@ -233,15 +216,7 @@ const App = React.createClass({
     this.setState({openNoteId: ''});
     this.setState({openNoteMsg: ''});
 
-    if(this.state.currentCal === 'Day'){
-      this.state.calendarObjects = this.getDayView();
-    } else if(this.state.currentCal === 'Week'){
-      this.state.calendarObjects = this.getWeekView();
-    } else if(this.state.currentCal === 'Month'){
-      this.state.calendarObjects = this.getMonthView();
-    } else if(this.state.currentCal === 'Year'){
-      this.state.calendarObjects = this.getYearView();
-    }
+    this.setCal(this.state.currentCal.type);
   },
   changeOpenId(e){
     e.preventDefault();
@@ -261,20 +236,7 @@ const App = React.createClass({
     this.saveMemo();
   },
   checkMemo(id){
-    // this.state.allMemos.forEach(function(memo){
-      // if(memo.id === id){
-      //   return memo.text;
-      // }
-      // if(this.state.currentCal.type === 'Day'){
-      //
-      // } else if (this.state.currentCal.type === 'Week'){
-      //
-      // } else if (this.state.currentCal.type === 'Month'){
-      //
-      // } else if (this.state.currentCal.type === 'Year'){
-      //
-      // }
-    // });
+
   },
   render() {
     let popUpStyles = {
@@ -311,12 +273,10 @@ const App = React.createClass({
           <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
 
           <Calendar currentCal={this.state.currentCal}
-            // calObjects={this.state.calObjects}
-            memos = {this.state.memos}
+            getCalView = {this.getCalView}
             selected={this.state.selected} select={this.select}
             openModal={this.openModal}
             openNoteId={this.state.openNoteId} openNoteMsg={this.state.openNoteMsg}
-            checkMemo={this.checkMemo}
             calendarObjects={this.state.calendarObjects}
             getDayView={this.getDayView} getWeekView={this.getWeekView} getMonthView={this.getMonthView} getYearView={this.getYearView}/>
 
