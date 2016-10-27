@@ -41,11 +41,11 @@ Annyang.start();
 const Calendar = React.createClass({
   render() {
     let calProps = this.props;
-    var calMap = this.props.calendarObjects;
+  //  var calMap = this.props.calendarObjects;
     return (
       <div className='cal-container' style={{background:'#F0FFFF'}}>
         {
-            calMap.map(function(obj, i){
+            calProps.calendarObjects.map(function(obj, i){
               let memoText;
               obj.memos.length ? (memoText = obj.memos.reduce(function(a, b){return a +  ', ' + b;})) : (memoText = '');
               return <Panel className='panel-fluid' key={obj.time}
@@ -142,11 +142,6 @@ const App = React.createClass({
       let memos = [];
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
-          console.log('memo date is i', memo.time.getDate(), ' ', i);
-          console.log('memo months is same ', memo.time.getMonth(), ' ', today.getMonth())
-          // console.log('i is ', i);
-          //       console.log('memo time ', memo.time.getMonth());
-          // console.log('today month ', today.getMonth())
           if(memo.time.getDate() === i && memo.time.getMonth() === today.getMonth()){
              memos.push(memo.text);
              console.log('pushed');
@@ -175,7 +170,7 @@ const App = React.createClass({
         });
       }
       yearMonths.push({
-        display: month.getMonth(),
+        display: month.getMonth() + 1,
         time: new Date(month.getYear(), month.getMonth(), month.getDay()),
         memos: memos
       });
@@ -257,6 +252,7 @@ const App = React.createClass({
     this.setState({openNoteMsg: e.target.value});
   },
   saveMemo(){
+    console.log('saving ... ', {time: this.state.openNoteId, text: this.state.openNoteMsg});
     this.state.memos.push({time: this.state.openNoteId, text: this.state.openNoteMsg});
     this.closeModal();
   },
