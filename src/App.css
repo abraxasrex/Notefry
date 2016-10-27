@@ -78,7 +78,7 @@
   padding: 5px;
   background: #FFA07A;
   border: 0.5px solid black;
-  transition: background 0.5s;
+  transition: background 0.5s width 1s height 1s;
   /*overflow: scroll;*/
 }
 
