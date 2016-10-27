@@ -10,21 +10,6 @@ import Moment from 'moment';
 const Panel = SubComponents.Panel;
 const Nav = SubComponents.Nav;
 
-// var Memos = [];
-// memo = {hour: x, day: x, month: x, memos: []}
-// var moments = [];
-//foo = new moment(something).add(10, 'm').toDate();
-// function  getAllHours() {
-//   var now = new Date();
-//   var then = Moment(now).add(6, 'month').toDate();
-//   while(then > now){
-//     moments.push({date: new Date(then), memos: []});
-//     then = Moment(then).subtract(1, 'hour').toDate();
-//   }
-//   console.log('moments: ', moments);
-//   console.log('then: ', then);
-// }
-
 /// annyang methods ////////////////////////////////////////////////////
 var speech;
 var commands = {
@@ -61,18 +46,12 @@ const Calendar = React.createClass({
       <div className='cal-container' style={{background:'#F0FFFF'}}>
         {
             calMap.map(function(obj, i){
-              //accepts obj.time, obj.memos
-            //  console.log('obj is... ', obj);
               let memoText;
-              obj.memos.length ? (memoText = obj.memos.reduce(function(a, b){return a + b;})) : (memoText = '');
-
-              return <Panel className='panel-fluid' key={i + '_' + obj.name + '_' + calProps.currentCal.type}
-              propKey={i + '_' + obj.name + '_' + calProps.currentCal.type}
-              currentCal={calProps.currentCal.type}
-              //calName={obj.name}
-              time ={obj.time}
-              // ^ 1. 1-24 dates, 2. Weekday, 3. day name, 4. month name
-              // calTitle
+              obj.memos.length ? (memoText = obj.memos.reduce(function(a, b){return a +  ', ' + b;})) : (memoText = '');
+              return <Panel className='panel-fluid' key={obj.time}
+              propKey={obj.time}
+              currentCal={calProps.currentCal}
+              display ={obj.display}
               selected={calProps.selected}
               select={calProps.select}
               openModal={calProps.openModal}
@@ -88,9 +67,6 @@ const Calendar = React.createClass({
 });
 
 const App = React.createClass({
-  componentDidMount() {
-    console.log('mounted component');
-  },
   nextCalView(){
     if(this.state.currentCal.type === 'Day'){
       this.state.currentCal.start = new Moment(this.state.currentCal.start).add(1, 'day').toDate();
@@ -99,7 +75,6 @@ const App = React.createClass({
     } else if(this.state.currentCal.type === 'Month'){
       this.state.currentCal.start = new Moment(this.state.currentCal.start).add(1, 'month').toDate();
     }
-    //no year next/last
   },
   lastCalView(){
     if(this.state.currentCal.type === 'Day'){
@@ -111,59 +86,51 @@ const App = React.createClass({
     }
   },
   getDayView(){
-    /// for ui
     var today = this.state.currentCal.start.getDay();
-
     var date = this.state.currentCal.start.getDate();
     var month = this.state.currentCal.start.getMonth();
-
+    var year = this.state.currentCal.start.getYear();
     let hourObjs = [];
-
     for( let i = 0; i < 24; i++ ){
       let memos = [];
-
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
-          if(memo.memos.length && memos.memo.hour == i && memos.memo.date == date && memos.memo.month == month){
-            memo.memos.forEach(function(m){
-              memos.push(m);
-            });
+          if(memo.time.getHours() == i &&
+          memo.time.getDate() === date && memo.time.getMonth() === month){
+            memos.push(memo.text);
           }
         });
       }
       hourObjs.push({
-        time:i,
+        display: i + 1,
+        time: new Date(year, month, date, i),
         memos: memos
       });
     }
       return hourObjs;
-          //return hourObjs {hour, memos}
   },
   getWeekView(){
-    var today = Moment(this.state.currentCal.start, "YYYY-MM-DD HH:mm:ss");
+    var today = new Date(this.state.currentCal.start);
     var weekDays = [];
-
     for(var i = 0; i < 7; i++){
       let memos = [];
-
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
-          if(memo.memos.length && memos.memo.date == today.getDay() && memos.memo.month == today.getMonth()){
-            memo.memos.forEach(function(m){
-              memos.push(m);
-            });
+          if(memo.time.getDate() === today.getDay()
+          && memo.time.getMonth() === today.getMonth()){
+            memos.push(memo.text);
           }
         });
       }
-
+      let formatDate =  Moment(today, "YYYY-MM-DD HH:mm:ss");
       weekDays.push({
-        time: Moment(today).format('dddd'),
+        display: Moment(formatDate).format('dddd'),
+        time: new Date(today.getYear(), today.getMonth(), today.getDate()),
         memos: memos
       });
-      today = new Moment(today).add(1, 'day').toDate();
+      today = Moment(today).add(1, 'day').toDate();
     }
     return weekDays;
-  // return weekDays {day, memos}
   },
   getMonthView(){
     var monthDays = [];
@@ -171,59 +138,46 @@ const App = React.createClass({
     var dayCount = Moment(today).daysInMonth();
     for(let i = 1; i < dayCount + 1; i++){
       let memos = [];
-
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
-          if(memo.memos.length && memos.memo.date == today.getDay() && memos.memo.month == today.getMonth()){
-            memo.memos.forEach(function(m){
-              memos.push(m);
-            });
+          if(memo.time.getDate() === today.getDate() && memo.time.getMonth() === today.getMonth()){
+             memos.push(memo.text);
           }
         });
       }
-
       monthDays.push({
+        display: i,
         time: today.getDate(),
         memos: memos
       });
       today = new Moment(today).add(1, 'day').toDate();
     }
       return monthDays;
-    // return monthDays {date, memos}
   },
   getYearView(){
     var yearMonths = [];
     var month = this.state.currentCal.start;
-        //  console.log('month is.... ', month.getMonth());
     for(let i = 0; i < 6; i++){
-
-      //var year = month.getFullYear();
-      //let month;
       let memos = [];
-      //get memos
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
-          if(memo.memos.length && memos.memo.month == month.getMonth()){
-            memo.memos.forEach(function(m){
-              memos.push(m);
-            });
+          if(memo.time.getMonth() === month.getMonth()){
+            memos.push(memo.text);
           }
         });
       }
-      yearMonths.push({time: month.getMonth(), memos: memos});
+      yearMonths.push({
+        display: month.getMonth(),
+        time: new Date(month.getYear(), month.getMonth(), month.getDay()),
+        memos: memos
+      });
       month = Moment(month).add(1, 'month').toDate();
     }
      return yearMonths;
-    // {month, memos}
   },
-  // 1. hours from now: Moments = [{times}]
-  // 2. memos = [{day: x, month: y, hour: z, memos: []]
-  // 3. this.currentCal = [{start: now(?), type: 'Week Day Month']
   getInitialState()  {
     let memos = [];
-    //var bootstrapDays = this.getDayView();
-    //console.log(' these days are .... ', bootstrapDays);
-    return { currentCal: {start: new Date(), type: 'Year'},
+    return { currentCal: {start: new Date(), type: 'Day'},
     calendarObjects: [],
       modalIsOpen: false,
       openNoteId: '',
@@ -238,12 +192,9 @@ const App = React.createClass({
     })
   },
   setCal (e) {
-  //   items: update(this.state.items, {1: {name: {$set: 'updated field name'}}})
-
     this.setState({
       currentCal: update(this.state.currentCal, {'type': {$set: e}})
     });
-
     if(e === 'Day'){
       this.state.calendarObjects = this.getDayView();
     } else if(e === 'Week'){
@@ -253,7 +204,6 @@ const App = React.createClass({
     } else if(e === 'Year'){
       this.state.calendarObjects = this.getYearView();
     }
-
   },
   select(e){
     if(this.state.selected === e){
@@ -266,11 +216,10 @@ const App = React.createClass({
       });
     }
   },
-  openModal: function(panelKey) {
+  openModal: function(objTime) {
    this.setState({modalIsOpen: true});
-   if(!!panelKey){
-     console.log(panelKey);
-     this.setState({openNoteId: panelKey});
+   if(!!objTime){
+     this.setState({openNoteId: objTime});
    }
   },
   afterOpenModal: function() {
@@ -290,16 +239,7 @@ const App = React.createClass({
     this.setState({openNoteMsg: e.target.value});
   },
   saveMemo(){
-    let memo = {id: this.state.openNoteId, text: this.state.openNoteMsg};
-    let name = this.state.openNoteId.split('_')[1];
-        // 2. memos = [{day: x, month: y, hour: z, memos: []]
-        // this.state.memos
-        //
-    this.state.calObjects[this.state.currentCal].forEach(function(obj){
-      if(obj.name === name){
-        obj.memos.push(memo.text);
-      }
-    });
+    this.state.memos.push({time: this.state.openNoteId, text: this.state.openNoteMsg});
     this.closeModal();
   },
   submitMemo(e){
@@ -307,11 +247,20 @@ const App = React.createClass({
     this.saveMemo();
   },
   checkMemo(id){
-    this.state.allMemos.forEach(function(memo){
-      if(memo.id === id){
-        return memo.text;
-      }
-    })
+    // this.state.allMemos.forEach(function(memo){
+      // if(memo.id === id){
+      //   return memo.text;
+      // }
+      // if(this.state.currentCal.type === 'Day'){
+      //
+      // } else if (this.state.currentCal.type === 'Week'){
+      //
+      // } else if (this.state.currentCal.type === 'Month'){
+      //
+      // } else if (this.state.currentCal.type === 'Year'){
+      //
+      // }
+    // });
   },
   render() {
     let popUpStyles = {
