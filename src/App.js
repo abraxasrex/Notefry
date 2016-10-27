@@ -1,55 +1,51 @@
 import React from 'react';
-import './App.css';
 import Modal from 'react-modal';
 import update from 'immutability-helper';
-import SubComponents from './SubComponents.js';
-import Annyang from 'annyang';
-import Bootstrap from './Bootstrap.js';
+//const SpeechKITT = require('../node_modules/speechkitt/dist/speechkitt.min.js');
+import annyang from 'annyang';
 import Moment from 'moment';
-//sub components
+// import FontAwesome from 'react-fontawesome';
+
+import SubComponents from './SubComponents.js';
+import Bootstrap from './Bootstrap.js';
+import './App.css';
+import '../node_modules/font-awesome/css/font-awesome.min.css';
 const Nav = SubComponents.Nav;
 const Calendar = SubComponents.Calendar;
 
-/// annyang methods ////////////////////////////////////////////////////
-var speech;
-var commands = {
-  'add': function() {
-    alert('add!');
-  //  ctx.openModal();
-   },
-  'save': function(){
-    alert('save!');
-    //  ctx.closeModal();
+const SpeechSynthesis = (
+  window.speechSynthesis ||
+  window.webkitSpeechSynthesis
+);
+let speech;
+let openModal, closeModal, saveMemo;
+
+const popUpStyles = {
+  overlay : {
+    position          : 'fixed',
+    top               : 0,
+    left              : 0,
+    right             : 0,
+    bottom            : 0,
+    backgroundColor   : 'rgba(255, 255, 255, 0.75)'
   },
-  'cancel': function(){
-  //    ctx.saveMemo();
-  alert('cancel!');
+  content : {
+    position                   : 'absolute',
+    top                        : '40px',
+    left                       : '20px',
+    right                      : '20px',
+    bottom                     : '20px',
+    border                     : '1px solid #ccc',
+    background                 : 'rgb(240, 255, 255)',
+    overflow                   : 'auto',
+    WebkitOverflowScrolling    : 'touch',
+    borderRadius               : '2.5px',
+    outline                    : 'none',
+    padding                    : '5px'
   }
 };
 
-Annyang.addCommands(commands);
-
-Annyang.addCallback('result', function(userSaid){
-  speech += userSaid;
-  console.log('user said:', userSaid);
-});
-
-Annyang.start();
-
-//////////////////////////////////////////////////////////
-
 const App = React.createClass({
-  getCalView(cur){
-    if(cur === 'Day'){
-      return this.getDayView();
-    } else if(cur === 'Week'){
-      return this.getWeekView();
-    } else if(cur === 'Month'){
-      return this.getMonthView();
-    } else if(cur === 'Year'){
-      return this.getYearView();
-    }
-  },
   nextCalView(){
     if(this.state.currentCal.type === 'Day'){
       this.state.currentCal.start = new Moment(this.state.currentCal.start).add(1, 'day').toDate();
@@ -162,16 +158,25 @@ const App = React.createClass({
      return yearMonths;
   },
   getInitialState()  {
+    //localstorage check will go here
+    openModal = this.openModal;
+    closeModal = this.closeModal;
+    saveMemo = this.saveMemo;
+
     let memos = [];
     return { currentCal: {start: new Date(), type: 'Day'},
     calendarObjects: [],
       modalIsOpen: false,
       openNoteId: '',
       openNoteMsg: null,
+      listening: false,
       memos: memos
     };
   },
   componentWillMount(){
+    //localStorage check here
+
+
     let bootstrapDays = this.getDayView();
     this.setState({
       calendarObjects: bootstrapDays
@@ -215,7 +220,6 @@ const App = React.createClass({
     this.setState({modalIsOpen: false});
     this.setState({openNoteId: ''});
     this.setState({openNoteMsg: ''});
-
     this.setCal(this.state.currentCal.type);
   },
   changeOpenId(e){
@@ -227,59 +231,38 @@ const App = React.createClass({
     this.setState({openNoteMsg: e.target.value});
   },
   saveMemo(){
-    console.log('saving ... ', {time: this.state.openNoteId, text: this.state.openNoteMsg});
-    this.state.memos.push({time: this.state.openNoteId, text: this.state.openNoteMsg});
+    this.state.memos.push({time: new Date(this.state.openNoteId), text: this.state.openNoteMsg});
     this.closeModal();
   },
   submitMemo(e){
     e.preventDefault();
     this.saveMemo();
   },
-  checkMemo(id){
-
+  listen(){
+    this.state.listening = !this.state.listening;
+    annyang.start();
+  },
+  noListen(){
+    this.state.listening = !this.state.listening;
+    annyang.abort();
   },
   render() {
-    let popUpStyles = {
-      overlay : {
-        position          : 'fixed',
-        top               : 0,
-        left              : 0,
-        right             : 0,
-        bottom            : 0,
-        backgroundColor   : 'rgba(255, 255, 255, 0.75)'
-      },
-      content : {
-        position                   : 'absolute',
-        top                        : '40px',
-        left                       : '20px',
-        right                      : '20px',
-        bottom                     : '20px',
-        border                     : '1px solid #ccc',
-        background                 : 'rgb(240, 255, 255)',
-        overflow                   : 'auto',
-        WebkitOverflowScrolling    : 'touch',
-        borderRadius               : '2.5px',
-        outline                    : 'none',
-        padding                    : '5px'
-      }
-    };
     return (
       <div className="App">
         <div className="App-header">
-        <h1>Notifry</h1>
-        <button onClick={() => this.openModal(false)}><h5>New Note</h5></button>
+        <h1 className="notifry">Notifry</h1>
+        <div className='mic' onClick={()=> this.state.listening ? this.noListen() : this.listen()}>
+          <i className="fa fa-microphone" aria-hidden="true"></i>
+        </div>
+        <button className='newNote' onClick={() => this.openModal(false)}><h5>New Note</h5></button>
       </div>
         <div className='app-container'>
           <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
-
           <Calendar currentCal={this.state.currentCal}
-            getCalView = {this.getCalView}
             selected={this.state.selected} select={this.select}
             openModal={this.openModal}
             openNoteId={this.state.openNoteId} openNoteMsg={this.state.openNoteMsg}
-            calendarObjects={this.state.calendarObjects}
-            getDayView={this.getDayView} getWeekView={this.getWeekView} getMonthView={this.getMonthView} getYearView={this.getYearView}/>
-
+            calendarObjects={this.state.calendarObjects} />
           <Modal
             isOpen={this.state.modalIsOpen}
             onAfterOpen={this.afterOpenModal}
@@ -304,7 +287,50 @@ const App = React.createClass({
   }
 });
 
-//
+var commands = {
+  'add': function() {
+    if(speechSynthesis){
+      speechSynthesis.speak(
+      new SpeechSynthesisUtterance('opening note.')
+     );
+    }
+    openModal(new Date());
+   },
+  'save': function(){
+    if(speechSynthesis){
+      speechSynthesis.speak(
+      new SpeechSynthesisUtterance('note saved!')
+     );
+    }
+    saveMemo();
+  },
+  'cancel': function(){
+        if(speechSynthesis){
+          speechSynthesis.speak(
+          new SpeechSynthesisUtterance('ok, canceling the note.')
+         );
+        }
+    closeModal();
+  }
+};
 
+annyang.addCommands(commands);
+
+annyang.addCallback('result', function(userSaid){
+  speech += userSaid;
+  console.log('user said:', userSaid);
+});
+
+  // Tell KITT to use annyang
+  // SpeechKITT.annyang();
+
+  // Define a stylesheet for KITT to use
+  //'../node_modules/speechkitt/dist/themes/flat.css'
+  // SpeechKITT.setStylesheet('//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/themes/flat.css');
+
+  // Render KITT's interface
+  // SpeechKITT.vroom();
+
+//Annyang.start();
 
 export default App;

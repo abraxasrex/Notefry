@@ -52,9 +52,8 @@ const Panel = React.createClass({
      memos.length ? (memoText = memos.reduce(function(a, b){return a +  ', ' + b;})) : (memoText = '');
     return (
       <div className={panelClasses}
-        style={  (this.props.selected === this.props.propKey) ? {background: hilite} : {background: normal}}
-        onClick={() => this.props.select(this.props.propKey) }
-         >
+        style={  (this.props.selected === this.props.propKey) ? {background: hilite, width: '75%', height: '100%', zIndex: '2px', position: 'absolute'} : {background: normal}}
+        onClick={() => this.props.select(this.props.propKey) }>
          {memoText}
         <div className='littleBox' onClick={() => this.props.openModal(this.props.propKey)}>+</div>
         {(this.props.display || this.props.display == 0) || 'not set'}
