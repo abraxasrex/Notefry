@@ -116,7 +116,7 @@ const App = React.createClass({
       let memos = [];
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
-          if(memo.time.getDate() === today.getDay()
+          if(memo.time.getDate() === today.getDate()
           && memo.time.getMonth() === today.getMonth()){
             memos.push(memo.text);
           }
@@ -134,20 +134,28 @@ const App = React.createClass({
   },
   getMonthView(){
     var monthDays = [];
-    var today = this.state.currentCal.start;
-    var dayCount = Moment(today).daysInMonth();
+    let today = new Date(this.state.currentCal.start)
+    var dayCount = Moment(this.state.currentCal.start).daysInMonth();
+    today = new Date(today.getYear(), today.getMonth(), 1);
+
     for(let i = 1; i < dayCount + 1; i++){
       let memos = [];
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
-          if(memo.time.getDate() === today.getDate() && memo.time.getMonth() === today.getMonth()){
+          console.log('memo date is i', memo.time.getDate(), ' ', i);
+          console.log('memo months is same ', memo.time.getMonth(), ' ', today.getMonth())
+          // console.log('i is ', i);
+          //       console.log('memo time ', memo.time.getMonth());
+          // console.log('today month ', today.getMonth())
+          if(memo.time.getDate() === i && memo.time.getMonth() === today.getMonth()){
              memos.push(memo.text);
+             console.log('pushed');
           }
         });
       }
       monthDays.push({
         display: i,
-        time: today.getDate(),
+        time: new Date(today),
         memos: memos
       });
       today = new Moment(today).add(1, 'day').toDate();

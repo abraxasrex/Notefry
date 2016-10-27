@@ -29,7 +29,7 @@ const Panel = React.createClass({
       <div className={panelClasses}
         style={  (this.props.selected === this.props.propKey) ? {background: hilite} : {background: normal}}
         onClick={() => this.props.select(this.props.propKey) }
-        checkMemo={this.props.checkMemo}>
+         >
          {this.props.memoText || ''}
         <div className='littleBox' onClick={() => this.props.openModal(this.props.propKey)}>+</div>
         {(this.props.display || this.props.display == 0) || 'not set'}
