@@ -47,22 +47,38 @@ const popUpStyles = {
 
 const App = React.createClass({
   nextCalView(){
+    var nextStart;
+    var nextTitle;
     if(this.state.currentCal.type === 'Day'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).add(1, 'day').toDate();
+      nextStart = new Moment(this.state.currentCal.start).add(1, 'day').toDate();
+      nextTitle = nextStart.getMonth() + ' / ' + nextStart.getDate();
     } else if(this.state.currentCal.type === 'Week'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).add(7, 'day').toDate();
+      nextStart = new Moment(this.state.currentCal.start).add(7, 'day').toDate();
+      nextTitle = nextStart.getMonth() + ' / ' + nextStart.getDate();
     } else if(this.state.currentCal.type === 'Month'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).add(1, 'month').toDate();
+      nextStart = new Moment(this.state.currentCal.start).add(1, 'month').toDate();
+      nextTitle = nextStart.getMonth() + ' / ' + nextStart.getFullYear();
+    } else {
+      return;
     }
+    this.setCal(this.state.currentCal.type, nextStart, nextTitle);
   },
   lastCalView(){
+    var nextStart;
+    var nextTitle;
     if(this.state.currentCal.type === 'Day'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).subtract(1, 'day').toDate();
+      nextStart = new Moment(this.state.currentCal.start).subtract(1, 'day').toDate();
+      nextTitle = nextStart.getMonth() + ' / ' + nextStart.getDate();
     } else if(this.state.currentCal.type === 'Week'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).subtract(7, 'day').toDate();
+      nextStart = new Moment(this.state.currentCal.start).subtract(7, 'day').toDate();
+      nextTitle = nextStart.getMonth() + ' / ' + nextStart.getDate();
     } else if(this.state.currentCal.type === 'Month'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).subtract(1, 'month').toDate();
+      nextStart = new Moment(this.state.currentCal.start).subtract(1, 'month').toDate();
+      nextTitle = nextStart.getMonth() + ' / ' + nextStart.getFullYear();
+    } else {
+      return;
     }
+    this.setCal(this.state.currentCal.type, nextStart, nextTitle);
   },
   getDayView(){
     var today = this.state.currentCal.start.getDay();
@@ -164,7 +180,8 @@ const App = React.createClass({
     saveMemo = this.saveMemo;
 
     let memos = [];
-    return { currentCal: {start: new Date(), type: 'Day'},
+    let now = new Date();
+    return { currentCal: {start: now, type: 'Day', title: now.getMonth() + ' / ' + now.getDate()},
     calendarObjects: [],
       modalIsOpen: false,
       openNoteId: '',
@@ -175,24 +192,37 @@ const App = React.createClass({
   },
   componentWillMount(){
     //localStorage check here
-
-
     let bootstrapDays = this.getDayView();
     this.setState({
       calendarObjects: bootstrapDays
     })
   },
-  setCal (e) {
+  setCal (newType, newStart, newTitle) {
+    var start = newStart;
+    var title = newTitle;
+    if(!newStart){
+      start = this.state.currentCal.start
+    }
+    if(!newTitle){
+      title = this.state.currentCal.title
+    }
     this.setState({
-      currentCal: update(this.state.currentCal, {'type': {$set: e}})
+      currentCal: update(this.state.currentCal, {'start': {$set: start}})
     });
-    if(e === 'Day'){
+    this.setState({
+      currentCal: update(this.state.currentCal, {'title': {$set: title}})
+    });
+    this.setState({
+      currentCal: update(this.state.currentCal, {'type': {$set: newType}})
+    });
+    console.log('newTitle: ', title, 'newStart: ', start);
+    if(newType === 'Day'){
       this.state.calendarObjects = this.getDayView();
-    } else if(e === 'Week'){
+    } else if(newType === 'Week'){
       this.state.calendarObjects = this.getWeekView();
-    } else if(e === 'Month'){
+    } else if(newType === 'Month'){
       this.state.calendarObjects = this.getMonthView();
-    } else if(e === 'Year'){
+    } else if(newType === 'Year'){
       this.state.calendarObjects = this.getYearView();
     }
   },
@@ -262,6 +292,8 @@ const App = React.createClass({
             selected={this.state.selected} select={this.select}
             openModal={this.openModal}
             openNoteId={this.state.openNoteId} openNoteMsg={this.state.openNoteMsg}
+            nextCalView={this.nextCalView}
+            lastCalView={this.lastCalView}
             calendarObjects={this.state.calendarObjects} />
           <Modal
             isOpen={this.state.modalIsOpen}

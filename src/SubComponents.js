@@ -3,7 +3,7 @@ import React from 'react';
 const NavPill = React.createClass({
   render () {
     return <div className='nav-partial' style={this.props.style}
-      onClick={() => this.props.setCal(this.props.pillName)}>
+      onClick={() => this.props.setCal(this.props.pillName, false, false)}>
       {this.props.pillName}
     </div>
   }
@@ -25,18 +25,26 @@ const Calendar = React.createClass({
    let calProps = this.props;
    let calObjects = calProps.calendarObjects;
     return (
-      <div className='cal-container' style={{background:'#F0FFFF'}}>
-        {
-            calObjects.map(function(obj, i){
-              return <Panel className='panel-fluid' key={obj.time} propKey={obj.time}
-              currentCal={calProps.currentCal}
-              display ={obj.display}
-              selected={calProps.selected}
-              select={calProps.select}
-              openModal={calProps.openModal}
-              thisObj={obj} />
-            })
-       }
+      <div className='cal-super-container'>
+        <div className='cal-title'>
+          <div className='cycle'><i className="fa fa-arrow-left" aria-hidden="true" onClick={this.props.lastCalView}></i></div>
+          {/* <h5 className='calTitleText'>{()=> new Date(calProps.currentCal.title)}</h5> */}
+              <h5 className='calTitleText'>{calProps.currentCal.title}</h5>
+          <div className='cycle'><i className="fa fa-arrow-right" aria-hidden="true" onClick={this.props.nextCalView}></i></div>
+        </div>
+        <div className='cal-container' style={{background:'#F0FFFF'}}>
+          {
+              calObjects.map(function(obj, i){
+                return <Panel className='panel-fluid' key={obj.time} propKey={obj.time}
+                currentCal={calProps.currentCal}
+                display ={obj.display}
+                selected={calProps.selected}
+                select={calProps.select}
+                openModal={calProps.openModal}
+                thisObj={obj} />
+              })
+         }
+        </div>
       </div>
     );
   }

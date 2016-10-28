@@ -46,17 +46,48 @@
   border: solid 1px white;
 }
 
+.calTitle {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  font-size: 1.8em;
+}
+.cycle {
+  display: inline-block;
+  width: 25%;
+  margin: 10px 0px 10px 0px;
+  padding: 10px 0px 10px 0px;
+    font-size: inherit;
+}
+.calTitleText {
+  display: inline-block;
+  width: 50%;
+  margin: 10px 0px 10px 0px;
+  padding: 10px 0px 10px 0px;
+  text-align: center;
+    font-size: inherit;
+}
+
+.cal-super-container{
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
 /* containers */
 
 .app-container {
-  width: 75%;
+  width: 90%;
   margin: 0 auto;
   padding: 5px;
 }
 
 .cal-container {
  width: 100%;
- padding: 5px;
+ padding: 5px 0px 5px 0px;
  margin: 10px 0px 10px 0px;
  border: 0.5px solid grey;
  border-radius: 5px;
@@ -116,7 +147,7 @@
 .nav-partial {
   width: 22%;
   color: rgba(1,1,1,0.8);
-  height: 50px;
+  height: 35px;
   border-radius: 15px;
   border: 1px solid;
   border-color: rgba(1,1,1,0.3);
