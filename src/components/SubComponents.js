@@ -62,4 +62,4 @@ const Panel = React.createClass({
   }
 });
 
-export default {Nav: Nav, Calendar: Calendar}
+//export default {Nav: Nav, Calendar: Calendar}

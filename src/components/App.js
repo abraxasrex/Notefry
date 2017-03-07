@@ -1,17 +1,17 @@
 import React from 'react';
 import Modal from 'react-modal';
 import update from 'immutability-helper';
-//const SpeechKITT = require('../node_modules/speechkitt/dist/speechkitt.min.js');
 import annyang from 'annyang';
 import Moment from 'moment';
-// import FontAwesome from 'react-fontawesome';
+//import 'font-awesome';
+import '../../node_modules/font-awesome/css/font-awesome.min.css';
 
-import SubComponents from './SubComponents.js';
-import Bootstrap from './Bootstrap.js';
-import './App.css';
-import '../node_modules/font-awesome/css/font-awesome.min.css';
-const Nav = SubComponents.Nav;
-const Calendar = SubComponents.Calendar;
+///import SubComponents from './SubComponents.js';
+import Nav from './Nav.js';
+import Calendar from './Calendar.js';
+import Bootstrap from '../Bootstrap.js';
+
+import '../css/App.css';
 
 const SpeechSynthesis = (
   window.speechSynthesis ||
@@ -175,8 +175,6 @@ const App = React.createClass({
   },
   componentWillMount(){
     //localStorage check here
-
-
     let bootstrapDays = this.getDayView();
     this.setState({
       calendarObjects: bootstrapDays
