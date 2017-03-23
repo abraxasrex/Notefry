@@ -8,69 +8,50 @@ import Nav from './Nav.js';
 import Calendar from './Calendar.js';
 import Bootstrap from '../Bootstrap.js';
 import '../css/App.css';
+import popUpStyles from './styles.js';
+// import getDayView from './lib.js';
 
+//require('node-jsx').install({extension: '.jsx'});
+//import AppComponentTemplate from './AppComponentTemplate.jsx';
 //import AppRenderer from './AppRenderer.js';
 
-const SpeechSynthesis = (
-  window.webkitSpeechSynthesis
-);
+// const SpeechSynthesis = (
+//   window.webkitSpeechSynthesis
+// );
+
 let openModal, closeModal, saveMemo;
-const popUpStyles = {
-  overlay : {
-    position          : 'fixed',
-    top               : 0,
-    left              : 0,
-    right             : 0,
-    bottom            : 0,
-    backgroundColor   : 'rgba(255, 255, 255, 0.75)'
-  },
-  content : {
-    position                   : 'absolute',
-    top                        : '40px',
-    left                       : '20px',
-    right                      : '20px',
-    bottom                     : '20px',
-    border                     : '1px solid #ccc',
-    background                 : 'rgb(240, 255, 255)',
-    overflow                   : 'auto',
-    WebkitOverflowScrolling    : 'touch',
-    borderRadius               : '2.5px',
-    outline                    : 'none',
-    padding                    : '5px'
-  }
-};
 
 const App = React.createClass({
-  getDayView(start){
-    let _start = this.state.currentCal.start;
-    if(start){
-      _start = start;
-    }
-    var today = _start.getDay();
-    var date = _start.getDate();
-    var month = _start.getMonth();
-    var year = _start.getYear();
-    let hourObjs = [];
-    for( let i = 0; i < 24; i++ ){
-      let _memo;
-      if(this.state.memos.length){
-        this.state.memos.forEach(function(memo){
-          if(memo.time.getHours() == i &&
-          memo.time.getDate() === date && memo.time.getMonth() === month){
-            _memo = memo.text;
-          }
-        });
-      }
-    //  let displayTime = Moment(new Date(year, month, date, i));
-      hourObjs.push({
-        //TODO momentify panel display
-        display: Moment(new Date(year, month, date, i)).format('hh:mm a'),
-        time: new Date(year, month, date, i),
-        memo: _memo
-      });
-    }
-      return hourObjs;
-  },
+ getDayView(start){
+   let _start = this.state.currentCal.start;
+   if(start){
+     _start = start;
+   }
+   var today = _start.getDay();
+   var date = _start.getDate();
+   var month = _start.getMonth();
+   var year = _start.getYear();
+   let hourObjs = [];
+   for( let i = 0; i < 24; i++ ){
+     let _memo;
+     if(this.state.memos.length){
+       this.state.memos.forEach(function(memo){
+         if(memo.time.getHours() == i &&
+         memo.time.getDate() === date && memo.time.getMonth() === month){
+           _memo = memo.text;
+         }
+       });
+     }
+   //  let displayTime = Moment(new Date(year, month, date, i));
+     hourObjs.push({
+       //TODO momentify panel display
+       display: Moment(new Date(year, month, date, i)).format('hh:mm a'),
+       time: new Date(year, month, date, i),
+       memo: _memo
+     });
+   }
+     return hourObjs;
+ },
   getWeekView(start){
     let today = new Date(this.state.currentCal.start);
     if(start){
@@ -169,12 +150,53 @@ const App = React.createClass({
       memos: memos
     };
   },
+  watchTime(){
+
+    let findMemo = (currentTime) =>{
+      let found = false;
+       if(this.state.memos.length){
+         this.state.memos.forEach(function(memo){
+           console.log(memo.time.getHours() + currentTime.getHours());
+            if(memo.time.getHours() == currentTime.getHours() &&
+              memo.time.getDate() == currentTime.getDate() &&
+              memo.time.getMonth() == currentTime.getMonth()
+            ){
+              console.log('found!');
+              found = memo.text;
+            }
+         });
+         if(!!found){
+           return found;
+         }
+       }
+       return false;
+    }
+
+    let checkForTime = ()=> {
+      let _now = new Date();
+      let calTime = this.state.currentCal.start;
+      let templateString = Moment(_now).format('MMMM Do YYYY, h:mm a');
+      let memoFound = false;
+      if(calTime != _now || calTime < _now){
+        this.setCal(this.state.currentCal.type, _now);
+        memoFound = findMemo(_now);
+        if(!!memoFound){
+          templateString += ". It is time to " + memoFound;
+        }
+        alert(` The time is ${ templateString }`);
+        //this.goToUpdate();
+      }
+    }
+    // 360000 ms === 1 hr
+    setInterval(checkForTime, 360000);
+  },
   componentWillMount(){
     //localStorage check here
     let bootstrapDays = this.getDayView();
     this.setState({
       calendarObjects: bootstrapDays
-    })
+    });
+    this.watchTime();
   },
   setCal (type, newStart) {
     let start = this.state.currentCal.start;
@@ -299,93 +321,93 @@ const App = React.createClass({
   },
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-        <h1 className="notifry">Notifry</h1>
-        <div className='mic' onClick={()=> this.state.listening ? this.noListen() : this.listen()}>
-          <i className="fa fa-microphone" aria-hidden="true"></i>
-        </div>
-        <button className='newNote' onClick={() => this.openModal(false)}><h5>New Note</h5></button>
+    <div className="App">
+      <div className="App-header">
+      <h1 className="notifry">Notifry</h1>
+      {/*<div className='mic' onClick={()=> this.state.listening ? this.noListen() : this.listen()}>
+        <i className="fa fa-microphone" aria-hidden="true"></i>
       </div>
-        <div className='app-container'>
-          <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
-          <div className="cal-header-container">
-            <div className = "left-arrow">
-                <i className="fa fa-hand-o-left" aria-hidden="true" onClick={ () => this.cycleCalendar('left')}></i>
-            </div>
-            <div className="cal-container cal-header" style={{background:'#F0FFFF'}}>
-              { this.viewHeader(this.state.currentCal.start, this.state.currentCal.type).toString() }
-            </div>
-            <div className = "right-arrow">
-              <i className="fa fa-hand-o-right" aria-hidden="true" onClick={ () => this.cycleCalendar('right')}></i>
-            </div>
+      <button className='newNote' onClick={() => this.openModal(false)}><h5>New Note</h5></button>*/}
+    </div>
+      <div className='app-container'>
+        <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
+        <div className="cal-header-container">
+          <div className = "left-arrow">
+              <i className="fa fa-hand-o-left" aria-hidden="true" onClick={ () => this.cycleCalendar('left')}></i>
           </div>
-          <Calendar currentCal={this.state.currentCal}
-            selected={this.state.selected} select={this.select}
-            openModal={this.openModal}
-            openNoteId={this.state.openNoteId}
-            openNoteMsg={this.state.openNoteMsg}
-            calendarObjects={this.state.calendarObjects}
-            goToPanelView={this.goToPanelView} />
-          <Modal
-            isOpen={this.state.modalIsOpen}
-            onAfterOpen={this.afterOpenModal}
-            onRequestClose={this.closeModal}
-            style={popUpStyles}
-            contentLabel="Example Modal">
-              <h2 ref="subtitle">New Note</h2>
-              <button onClick={this.closeModal}>close</button>
-              <form>
-                <label>note msg:</label>
-                <br />
-                <textarea onChange={this.changeOpenMsg} value={this.state.openNoteMsg || ''} ></textarea>
-                <br />
-                <label>date:</label>
-                <input onChange={this.changeOpenId} value={this.state.openNoteId}/>
-                <br />
-                <button onClick={this.submitMemo}>Save your memo</button>
-              </form>
-          </Modal>
+          <div className="cal-container cal-header" style={{background:'#F0FFFF'}}>
+            { this.viewHeader(this.state.currentCal.start, this.state.currentCal.type).toString() }
+          </div>
+          <div className = "right-arrow">
+            <i className="fa fa-hand-o-right" aria-hidden="true" onClick={ () => this.cycleCalendar('right')}></i>
+          </div>
         </div>
+        <Calendar currentCal={this.state.currentCal}
+          selected={this.state.selected} select={this.select}
+          openModal={this.openModal}
+          openNoteId={this.state.openNoteId}
+          openNoteMsg={this.state.openNoteMsg}
+          calendarObjects={this.state.calendarObjects}
+          goToPanelView={this.goToPanelView} />
+        <Modal
+          isOpen={this.state.modalIsOpen}
+          onAfterOpen={this.afterOpenModal}
+          onRequestClose={this.closeModal}
+          style={popUpStyles}
+          contentLabel="Example Modal">
+            <h2 ref="subtitle">New Note</h2>
+            <button onClick={this.closeModal}>close</button>
+            <form>
+              <label>note msg:</label>
+              <br />
+              <textarea onChange={this.changeOpenMsg} value={this.state.openNoteMsg || ''} ></textarea>
+              <br />
+              <label>date:</label>
+              <input onChange={this.changeOpenId} value={this.state.openNoteId}/>
+              <br />
+              <button onClick={this.submitMemo}>Save your memo</button>
+            </form>
+        </Modal>
       </div>
-    );
+    </div>
+  );
   }
 });
 
-var commands = {
-  'add': function() {
-    if(speechSynthesis){
-      speechSynthesis.speak(
-      new SpeechSynthesisUtterance('opening note.')
-     );
-    }
-    openModal(new Date());
-   },
-  'save': function(){
-    if(speechSynthesis){
-      speechSynthesis.speak(
-      new SpeechSynthesisUtterance('note saved!')
-     );
-    }
-    saveMemo();
-  },
-  'cancel': function(){
-        if(speechSynthesis){
-          speechSynthesis.speak(
-          new SpeechSynthesisUtterance('ok, canceling the note.')
-         );
-        }
-    closeModal();
-  }
-};
-
-annyang.addCommands(commands);
-
-annyang.addCallback('result', function(userSaid){
-  //TODO: wtf happened here?
-  //speech += userSaid;
-  console.log('user said:', userSaid);
-});
+// var commands = {
+//   'add': function() {
+//     if(speechSynthesis){
+//       speechSynthesis.speak(
+//       new SpeechSynthesisUtterance('opening note.')
+//      );
+//     }
+//     openModal(new Date());
+//    },
+//   'save': function(){
+//     if(speechSynthesis){
+//       speechSynthesis.speak(
+//       new SpeechSynthesisUtterance('note saved!')
+//      );
+//     }
+//     saveMemo();
+//   },
+//   'cancel': function(){
+//         if(speechSynthesis){
+//           speechSynthesis.speak(
+//           new SpeechSynthesisUtterance('ok, canceling the note.')
+//          );
+//         }
+//     closeModal();
+//   }
+// };
+//
+// annyang.addCommands(commands);
+//
+// annyang.addCallback('result', function(userSaid){
+//   //TODO: wtf happened here?
+//   //speech += userSaid;
+//   console.log('user said:', userSaid);
+// });
 
 //Annyang.start();
 
