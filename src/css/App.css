@@ -151,3 +151,19 @@
     opacity: 0.00;
     transform: scale(0.7);
 }
+
+.cal-header-container {
+  display: flex;
+  justify-content: space-around;
+}
+.cal-header {
+  width: 70% !important;
+}
+
+.left-arrow, .right-arrow {
+   width: 15%;
+   vertical-align: middle;
+   padding-top: 20px;
+   padding-bottom: 20px;
+   font-size: 2em;
+}

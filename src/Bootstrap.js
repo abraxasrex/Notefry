@@ -4,87 +4,87 @@ var Bootstrap = {
     currentCal: 'Week',
     calObjects: {
         Day: [
-          {name: '1AM', memos: []},
-          {name: '2AM', memos: []},
-          {name: '3AM', memos: []},
-          {name: '4AM', memos: []},
-          {name: '5AM', memos: []},
-          {name: '6AM', memos: []},
-          {name: '7AM', memos: []},
-          {name: '8AM', memos: []},
-          {name: '9AM', memos: []},
-          {name: '10AM', memos: []},
-          {name: '11AM', memos: []},
-          {name: '12AM', memos: []},
-          {name: '1PM', memos: []},
-          {name: '2PM', memos: []},
-          {name: '3PM', memos: []},
-          {name: '4PM', memos: []},
-          {name: '5PM', memos: []},
-          {name: '6PM', memos: []},
-          {name: '7PM', memos: []},
-          {name: '8PM', memos: []},
-          {name: '9PM', memos: []},
-          {name: '10PM', memos: []},
-          {name: '11PM', memos: []},
-          {name: '12PM', memos: []}
+          {name: '1AM', memo: []},
+          {name: '2AM', memo: []},
+          {name: '3AM', memo: []},
+          {name: '4AM', memo: []},
+          {name: '5AM', memo: []},
+          {name: '6AM', memo: []},
+          {name: '7AM', memo: []},
+          {name: '8AM', memo: []},
+          {name: '9AM', memo: []},
+          {name: '10AM', memo: []},
+          {name: '11AM', memo: []},
+          {name: '12AM', memo: []},
+          {name: '1PM', memo: []},
+          {name: '2PM', memo: []},
+          {name: '3PM', memo: []},
+          {name: '4PM', memo: []},
+          {name: '5PM', memo: []},
+          {name: '6PM', memo: []},
+          {name: '7PM', memo: []},
+          {name: '8PM', memo: []},
+          {name: '9PM', memo: []},
+          {name: '10PM', memo: []},
+          {name: '11PM', memo: []},
+          {name: '12PM', memo: []}
         ],
       Week: [
-        {name: 'Monday', date: '', memos: []},
-        {name: 'Tuesday', date: '', memos: []},
-        {name: 'Wednesday', date: '', memos: []},
-        {name: 'Thursday', date: '', memos: []},
-        {name: 'Friday', date: '', memos: []},
-        {name: 'Saturday', date: '', memos: []},
-        {name: 'Sunday', date: '', memos: []}
+        {name: 'Monday', date: '', memo: []},
+        {name: 'Tuesday', date: '', memo: []},
+        {name: 'Wednesday', date: '', memo: []},
+        {name: 'Thursday', date: '', memo: []},
+        {name: 'Friday', date: '', memo: []},
+        {name: 'Saturday', date: '', memo: []},
+        {name: 'Sunday', date: '', memo: []}
       ],
       Month: [
-        {name:1,memos:[]},
-        {name:2,memos:[]},
-        {name:3,memos:[]},
-        {"name":4,"memos":[]},
-        {"name":5,"memos":[]},
-        {"name":6,"memos":[]},
-        {"name":7,"memos":[]},
-        {"name":8,"memos":[]},
-        {"name":9,"memos":[]},
-        {"name":10,"memos":[]},
-        {"name":11,"memos":[]},
-        {"name":12,"memos":[]},
-        {"name":13,"memos":[]},
-        {"name":14,"memos":[]},
-        {"name":15,"memos":[]},
-        {"name":16,"memos":[]},
-        {"name":17,"memos":[]},
-        {"name":18,"memos":[]},
-        {"name":19,"memos":[]},
-        {"name":20,"memos":[]},
-        {"name":21,"memos":[]},
-        {"name":22,"memos":[]},
-        {"name":23,"memos":[]},
-        {"name":24,"memos":[]},
-        {"name":25,"memos":[]},
-        {"name":26,"memos":[]},
-        {"name":27,"memos":[]},
-        {"name":28,"memos":[]},
-        {"name":29,"memos":[]},
-        {"name":30,"memos":[]},
-        {"name":31,"memos":[]},
-        {"name":'',"memos":[]}
+        {name:1,memo:[]},
+        {name:2,memo:[]},
+        {name:3,memo:[]},
+        {"name":4,"memo":[]},
+        {"name":5,"memo":[]},
+        {"name":6,"memo":[]},
+        {"name":7,"memo":[]},
+        {"name":8,"memo":[]},
+        {"name":9,"memo":[]},
+        {"name":10,"memo":[]},
+        {"name":11,"memo":[]},
+        {"name":12,"memo":[]},
+        {"name":13,"memo":[]},
+        {"name":14,"memo":[]},
+        {"name":15,"memo":[]},
+        {"name":16,"memo":[]},
+        {"name":17,"memo":[]},
+        {"name":18,"memo":[]},
+        {"name":19,"memo":[]},
+        {"name":20,"memo":[]},
+        {"name":21,"memo":[]},
+        {"name":22,"memo":[]},
+        {"name":23,"memo":[]},
+        {"name":24,"memo":[]},
+        {"name":25,"memo":[]},
+        {"name":26,"memo":[]},
+        {"name":27,"memo":[]},
+        {"name":28,"memo":[]},
+        {"name":29,"memo":[]},
+        {"name":30,"memo":[]},
+        {"name":31,"memo":[]},
+        {"name":'',"memo":[]}
       ],
       Year: [
-        {name: 'January', memos: []},
-        {name: 'February', memos: []},
-        {name: 'March', memos: []},
-        {name: 'April', memos: []},
-        {name: 'May', memos: []},
-        {name: 'June', memos: []},
-        {name: 'July', memos: []},
-        {name: 'August', memos: []},
-        {name: 'September', memos: []},
-        {name: 'October', memos: []},
-        {name: 'November', memos: []},
-        {name: 'December', memos: []}
+        {name: 'January', memo: []},
+        {name: 'February', memo: []},
+        {name: 'March', memo: []},
+        {name: 'April', memo: []},
+        {name: 'May', memo: []},
+        {name: 'June', memo: []},
+        {name: 'July', memo: []},
+        {name: 'August', memo: []},
+        {name: 'September', memo: []},
+        {name: 'October', memo: []},
+        {name: 'November', memo: []},
+        {name: 'December', memo: []}
       ],
       // non-calendar-bootstrap props //
       modalIsOpen: false,
@@ -94,29 +94,7 @@ var Bootstrap = {
 };
 
 var moments = [
-  {date: 'datestring', memos: []}
+  {date: 'datestring', memo: []}
 ];
-
-// var Bootstrap = function (){
-//   var now = new Date();
-//   var then = now.setMonth(now.getMonth() + 1);
-//   while(now < then){
-//     moments.push({date: now, memos: []});
-//     now.setHours(now.getHours() + 1);
-//   }
-//   console.log(moments);
-// }
-
-function aggregateHoursForDay(){
-
-}
-
-function aggregateDaysForWeek(){
-
-}
-
-function aggregateWeeksForMonth(){
-
-}
 
 export default Bootstrap

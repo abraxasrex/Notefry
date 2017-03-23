@@ -3,23 +3,18 @@ import Modal from 'react-modal';
 import update from 'immutability-helper';
 import annyang from 'annyang';
 import Moment from 'moment';
-//import 'font-awesome';
 import '../../node_modules/font-awesome/css/font-awesome.min.css';
-
-///import SubComponents from './SubComponents.js';
 import Nav from './Nav.js';
 import Calendar from './Calendar.js';
 import Bootstrap from '../Bootstrap.js';
-
 import '../css/App.css';
 
+//import AppRenderer from './AppRenderer.js';
+
 const SpeechSynthesis = (
-  window.speechSynthesis ||
   window.webkitSpeechSynthesis
 );
-let speech;
 let openModal, closeModal, saveMemo;
-
 const popUpStyles = {
   overlay : {
     position          : 'fixed',
@@ -46,112 +41,113 @@ const popUpStyles = {
 };
 
 const App = React.createClass({
-  nextCalView(){
-    if(this.state.currentCal.type === 'Day'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).add(1, 'day').toDate();
-    } else if(this.state.currentCal.type === 'Week'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).add(7, 'day').toDate();
-    } else if(this.state.currentCal.type === 'Month'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).add(1, 'month').toDate();
+  getDayView(start){
+    let _start = this.state.currentCal.start;
+    if(start){
+      _start = start;
     }
-  },
-  lastCalView(){
-    if(this.state.currentCal.type === 'Day'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).subtract(1, 'day').toDate();
-    } else if(this.state.currentCal.type === 'Week'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).subtract(7, 'day').toDate();
-    } else if(this.state.currentCal.type === 'Month'){
-      this.state.currentCal.start = new Moment(this.state.currentCal.start).subtract(1, 'month').toDate();
-    }
-  },
-  getDayView(){
-    var today = this.state.currentCal.start.getDay();
-    var date = this.state.currentCal.start.getDate();
-    var month = this.state.currentCal.start.getMonth();
-    var year = this.state.currentCal.start.getYear();
+    var today = _start.getDay();
+    var date = _start.getDate();
+    var month = _start.getMonth();
+    var year = _start.getYear();
     let hourObjs = [];
     for( let i = 0; i < 24; i++ ){
-      let memos = [];
+      let _memo;
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
           if(memo.time.getHours() == i &&
           memo.time.getDate() === date && memo.time.getMonth() === month){
-            memos.push(memo.text);
+            _memo = memo.text;
           }
         });
       }
+    //  let displayTime = Moment(new Date(year, month, date, i));
       hourObjs.push({
-        display: i + 1,
+        //TODO momentify panel display
+        display: Moment(new Date(year, month, date, i)).format('hh:mm a'),
         time: new Date(year, month, date, i),
-        memos: memos
+        memo: _memo
       });
     }
       return hourObjs;
   },
-  getWeekView(){
-    var today = new Date(this.state.currentCal.start);
+  getWeekView(start){
+    let today = new Date(this.state.currentCal.start);
+    if(start){
+      today = new Date(start);
+    }
     var weekDays = [];
     for(var i = 0; i < 7; i++){
-      let memos = [];
+      let _memo;
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
           if(memo.time.getDate() === today.getDate()
           && memo.time.getMonth() === today.getMonth()){
-            memos.push(memo.text);
+            _memo = memo.text;
           }
         });
       }
       let formatDate =  Moment(today, "YYYY-MM-DD HH:mm:ss");
       weekDays.push({
-        display: Moment(formatDate).format('dddd'),
+          //TODO momentify panel display
+        display: Moment(formatDate).format('dddd') + ' ' + parseInt(today.getMonth() + 1) + '/' + parseInt(today.getDate()),
         time: new Date(today.getYear(), today.getMonth(), today.getDate()),
-        memos: memos
+        memo: _memo
       });
       today = Moment(today).add(1, 'day').toDate();
     }
     return weekDays;
   },
-  getMonthView(){
+  getMonthView(start){
     var monthDays = [];
-    let today = new Date(this.state.currentCal.start)
+    let today = new Date(this.state.currentCal.start);
+    if(start){
+      today = new Date(start);
+    }
     var dayCount = Moment(this.state.currentCal.start).daysInMonth();
     today = new Date(today.getYear(), today.getMonth(), 1);
 
     for(let i = 1; i < dayCount + 1; i++){
-      let memos = [];
+      let _memo;
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
           if(memo.time.getDate() === i && memo.time.getMonth() === today.getMonth()){
-             memos.push(memo.text);
-             console.log('pushed');
+             _memo = memo.text;
+            // console.log('pushed');
           }
         });
       }
       monthDays.push({
-        display: i,
+        //TODO momentify
+        display: parseInt(today.getMonth() + 1) + '/' + parseInt(today.getDate()),
         time: new Date(today),
-        memos: memos
+        memo: _memo
       });
       today = new Moment(today).add(1, 'day').toDate();
     }
       return monthDays;
   },
-  getYearView(){
+  getYearView(start){
     var yearMonths = [];
     var month = this.state.currentCal.start;
-    for(let i = 0; i < 6; i++){
-      let memos = [];
+    if(start){
+      month = start;
+    }
+    for(let i = 0; i < 12; i++){
+      let _memo;
       if(this.state.memos.length){
         this.state.memos.forEach(function(memo){
           if(memo.time.getMonth() === month.getMonth()){
-            memos.push(memo.text);
+            _memo = memo.text;
           }
         });
       }
       yearMonths.push({
-        display: month.getMonth() + 1,
+        //momentify
+      //  display: month.getMonth() + 1,
+      display: Moment(month).format('MMMM YYYY'),
         time: new Date(month.getYear(), month.getMonth(), month.getDay()),
-        memos: memos
+        memos: _memo
       });
       month = Moment(month).add(1, 'month').toDate();
     }
@@ -180,20 +176,61 @@ const App = React.createClass({
       calendarObjects: bootstrapDays
     })
   },
-  setCal (e) {
-    this.setState({
-      currentCal: update(this.state.currentCal, {'type': {$set: e}})
-    });
-    if(e === 'Day'){
-      this.state.calendarObjects = this.getDayView();
-    } else if(e === 'Week'){
-      this.state.calendarObjects = this.getWeekView();
-    } else if(e === 'Month'){
-      this.state.calendarObjects = this.getMonthView();
-    } else if(e === 'Year'){
-      this.state.calendarObjects = this.getYearView();
+  setCal (type, newStart) {
+    let start = this.state.currentCal.start;
+    if(newStart){
+      start = newStart;
     }
+    this.setState({
+      currentCal: update(this.state.currentCal,
+        {'type': {$set: type},
+         'start': {$set: start}
+       })
+    });
+    //  console.log('setCals start is: ', this.state.currentCal.start);
+      if(type === 'Day'){
+        this.state.calendarObjects = this.getDayView(start);
+      } else if(type === 'Week'){
+        this.state.calendarObjects = this.getWeekView(start);
+      } else if(type === 'Month'){
+        this.state.calendarObjects = this.getMonthView(start);
+      } else if(type === 'Year'){
+        this.state.calendarObjects = this.getYearView(start);
+      }
+
   },
+  cycleCalendar(direction){
+  //  console.log('going ', direction);
+    let start = this.state.currentCal.start;
+    let type = this.state.currentCal.type;
+    let newDate;
+    let currentTypeString = type.toLowerCase() + 's';
+    let startMoment = new Moment(start);
+
+  //  console.log('type string:', currentTypeString);
+    if(direction === 'right'){
+    //  newDate = new Date( startMoment.add(1, currentTypeString).format('YYYYMMDD');
+      newDate = new Date( startMoment.add(1, currentTypeString));
+    }
+    if(direction === 'left'){
+      newDate = new Date( startMoment.subtract(1, currentTypeString));
+    }
+  //  console.log("start: ", startMoment);
+  //  console.log("new Date: ", newDate);
+   this.setCal(type, newDate);
+ },
+ goToPanelView(type, start, key){
+  // console.log(type);
+  // console.log(start);
+  // console.log(key);
+   if(type === 'Day'){
+     this.select(key);
+   } else if(type == 'Week' || type == 'Month'){
+      this.setCal('Day', new Date(start));
+   } else if (type == 'Year'){
+     this.setCal('Month', new Date(start));
+   }
+ },
   select(e){
     if(this.state.selected === e){
       this.setState({
@@ -244,6 +281,22 @@ const App = React.createClass({
     this.state.listening = !this.state.listening;
     annyang.abort();
   },
+  viewHeader(startDate, type){
+            if(type === 'Day'){
+              return 'Day of ' + Moment(startDate).format('MMMM') + ' ' + startDate.getDate();
+            }
+            if(type === 'Week'){
+              return 'Week of ' + Moment(startDate).format('MMMM') + ' ' + startDate.getDate();
+            }
+            if(type === 'Month'){
+              return Moment(startDate).format('MMMM') + ' ' + Moment(startDate).format('YYYY');
+            }
+            if(type === 'Year'){
+              return 'Year of ' + Moment(startDate).format('YYYY');
+            } else {
+            //  console.log('???');
+            }
+  },
   render() {
     return (
       <div className="App">
@@ -256,11 +309,24 @@ const App = React.createClass({
       </div>
         <div className='app-container'>
           <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
+          <div className="cal-header-container">
+            <div className = "left-arrow">
+                <i className="fa fa-hand-o-left" aria-hidden="true" onClick={ () => this.cycleCalendar('left')}></i>
+            </div>
+            <div className="cal-container cal-header" style={{background:'#F0FFFF'}}>
+              { this.viewHeader(this.state.currentCal.start, this.state.currentCal.type).toString() }
+            </div>
+            <div className = "right-arrow">
+              <i className="fa fa-hand-o-right" aria-hidden="true" onClick={ () => this.cycleCalendar('right')}></i>
+            </div>
+          </div>
           <Calendar currentCal={this.state.currentCal}
             selected={this.state.selected} select={this.select}
             openModal={this.openModal}
-            openNoteId={this.state.openNoteId} openNoteMsg={this.state.openNoteMsg}
-            calendarObjects={this.state.calendarObjects} />
+            openNoteId={this.state.openNoteId}
+            openNoteMsg={this.state.openNoteMsg}
+            calendarObjects={this.state.calendarObjects}
+            goToPanelView={this.goToPanelView} />
           <Modal
             isOpen={this.state.modalIsOpen}
             onAfterOpen={this.afterOpenModal}
@@ -271,7 +337,8 @@ const App = React.createClass({
               <button onClick={this.closeModal}>close</button>
               <form>
                 <label>note msg:</label>
-                <input onChange={this.changeOpenMsg} value={this.state.openNoteMsg}/>
+                <br />
+                <textarea onChange={this.changeOpenMsg} value={this.state.openNoteMsg || ''} ></textarea>
                 <br />
                 <label>date:</label>
                 <input onChange={this.changeOpenId} value={this.state.openNoteId}/>
@@ -315,19 +382,10 @@ var commands = {
 annyang.addCommands(commands);
 
 annyang.addCallback('result', function(userSaid){
-  speech += userSaid;
+  //TODO: wtf happened here?
+  //speech += userSaid;
   console.log('user said:', userSaid);
 });
-
-  // Tell KITT to use annyang
-  // SpeechKITT.annyang();
-
-  // Define a stylesheet for KITT to use
-  //'../node_modules/speechkitt/dist/themes/flat.css'
-  // SpeechKITT.setStylesheet('//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/themes/flat.css');
-
-  // Render KITT's interface
-  // SpeechKITT.vroom();
 
 //Annyang.start();
 
