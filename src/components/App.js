@@ -178,13 +178,13 @@ const App = React.createClass({
       let templateString = Moment(_now).format('MMMM Do YYYY, h:mm a');
       let memoFound = false;
       if(calTime != _now || calTime < _now){
-        this.setCal(this.state.currentCal.type, _now);
+      //  this.setCal(this.state.currentCal.type, _now);
         memoFound = findMemo(_now);
         if(!!memoFound){
           templateString += ". It is time to " + memoFound;
+          this.setCal('Day', _now);
         }
         alert(` The time is ${ templateString }`);
-        //this.goToUpdate();
       }
     }
     // 360000 ms === 1 hr
