@@ -5,7 +5,8 @@ const popUpStyles = {
     left              : 0,
     right             : 0,
     bottom            : 0,
-    backgroundColor   : 'rgba(255, 255, 255, 0.75)'
+    backgroundColor   : 'rgba(255, 255, 255, 0.75)',
+    zIndex : 3
   },
   content : {
     position                   : 'absolute',
@@ -19,7 +20,7 @@ const popUpStyles = {
     WebkitOverflowScrolling    : 'touch',
     borderRadius               : '2.5px',
     outline                    : 'none',
-    padding                    : '5px'
+    padding                    : '20px'
   }
 };
 

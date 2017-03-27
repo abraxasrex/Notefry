@@ -25,7 +25,7 @@
 }
 .App-header * {
   margin: 0 auto;
-  text-align: center; 
+  text-align: center;
 }
 
 .App-intro {
@@ -64,8 +64,8 @@
  width: 100%;
  padding: 5px;
  margin: 10px 0px 10px 0px;
- border: 0.5px solid grey;
- border-radius: 5px;
+ /*border: 0.5px solid grey;*/
+ /*border-radius: 5px;*/
  display: flex;
  justify-content: space-around;
  flex-wrap: wrap;
@@ -77,15 +77,22 @@
  width: 100%;
  height: 100%;
 }
+
 .cal-panel {
-  border: 1px solid black;
-  height: 75px;
+  /*border: 1px solid black;*/
+  /*height: 75px;*/
   margin: 5px;
   padding: 5px;
   background: #FFA07A;
-  border: 0.5px solid black;
+  /*border: 0.5px solid black;*/
   transition: background 0.5s width 1s height 1s;
   /*overflow: scroll;*/
+}
+
+.nAppBar h1 {
+  font-size: 2.5em !important;
+  text-align: center;
+  /*text-decoration: underline;*/
 }
 
 .popuppanel {
@@ -98,6 +105,13 @@
 }
 .Week-cal-panel {
   width: 11.5%;
+}
+.Week-cal-panel span {
+  font-size: 1.1em !important;
+}
+.Week-cal-panel button {
+
+  font-size: 0.55em !important;
 }
 .Day-cal-panel {
   width: 90%;
@@ -112,15 +126,15 @@
 /* nav view */
 
 .nav-full {
-  width: 100%;
+  width: 75%;
+  margin: 1em;
   /*border: 1px solid black;*/
-
   display: flex;
   justify-content: space-around;
 }
 
 .nav-partial {
-  width: 22%;
+  width: 25% !important;
   color: rgba(1,1,1,0.8);
   height: 50px;
   border-radius: 15px;
@@ -130,6 +144,9 @@
   padding: 5px;
 }
 
+/*nav-full > div {
+  width: 20px !important;
+}*/
 /* modal */
 .popUp {
   position: absolute;
@@ -164,10 +181,18 @@
 }
 .cal-header {
   width: 70% !important;
+  margin: 0.5em;
+  padding: 1em;
+  font-size: 2em;
+}
+
+.nFloat {
+  box-shadow: 0px 0px !important;
+  padding: 2em;
 }
 
 .left-arrow, .right-arrow {
-   width: 15%;
+   /*width: 15%;*/
    vertical-align: middle;
    padding-top: 20px;
    padding-bottom: 20px;

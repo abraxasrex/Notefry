@@ -7,8 +7,22 @@ import '../../node_modules/font-awesome/css/font-awesome.min.css';
 import Nav from './Nav.js';
 import Calendar from './Calendar.js';
 import Bootstrap from '../Bootstrap.js';
+import TextField from 'material-ui/TextField';
+
 import '../css/App.css';
 import popUpStyles from './styles.js';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import Paper from 'material-ui/Paper';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import DateRange from 'material-ui/svg-icons/action/date-range';
+import Dialog from 'material-ui/Dialog';
+injectTapEventPlugin();
 // import getDayView from './lib.js';
 
 //require('node-jsx').install({extension: '.jsx'});
@@ -18,6 +32,76 @@ import popUpStyles from './styles.js';
 // const SpeechSynthesis = (
 //   window.webkitSpeechSynthesis
 // );
+
+ class DialogExampleSimple extends React.Component {
+  state = {
+    open: false,
+  };
+
+  handleOpen = () => {
+    this.setState({open: true});
+    this.props.openModal();
+    };
+
+  handleClose = () => {
+    this.setState({open: false});
+    this.props.closeModal();
+  };
+  constructor = () =>{
+    this.openNoteMsg = this.props.openNoteMsg;
+    this.changeOpenMsg = this.props.changeOpenMsg;
+    this.changeOpenId = this.props.changeOpenId;
+    this.openNoteId = this.props.openNoteId;
+    this.submitMemo = this.props.submitMemo;
+  };
+  render() {
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onTouchTap={this.handleClose}
+      />,
+      <FlatButton
+        label="Submit"
+        primary={true}
+        keyboardFocused={true}
+        onTouchTap={this.handleClose}
+      />,
+    ];
+
+    return (
+      <div>
+        <RaisedButton label="Dialog" onTouchTap={this.handleOpen} />
+        <Dialog
+          title="Dialog With Actions"
+          actions={actions}
+          modal={false}
+          open={this.state.open}
+          onRequestClose={this.handleClose} >
+          <h2> New Note: </h2>
+              <form>
+                <label>note msg:</label>
+                <br />
+                <textarea onChange={this.changeOpenMsg} value={this.state.openNoteMsg || ''} ></textarea>
+                <br />
+                <label>date:</label>
+                <input onChange={this.changeOpenId} value={this.state.openNoteId}/>
+                <br />
+                <button onClick={this.submitMemo}>Save your memo</button>
+              </form>
+        </Dialog>
+      </div>
+    );
+  }
+}
+
+// <Modal
+//   isOpen={this.state.modalIsOpen}
+//   onRequestClose={this.closeModal}
+//   style={popUpStyles}
+//   contentLabel="Example Modal">
+//     <button onClick={this.closeModal}>close</button>
+// </Modal>
 
 let openModal, closeModal, saveMemo;
 
@@ -199,6 +283,7 @@ const App = React.createClass({
     this.watchTime();
   },
   setCal (type, newStart) {
+    console.log(this.state.memos);
     let start = this.state.currentCal.start;
     if(newStart){
       start = newStart;
@@ -264,14 +349,49 @@ const App = React.createClass({
       });
     }
   },
+  displayFormat(_date){
+    //   this.setState({openNoteId: Moment(new Date(objTime)).format(' HH:mm, MMMM DD')});
+   return Moment(new Date(_date)).format(' HH:mm, MMMM DD');
+  //  return 'squeegee';
+  },
   openModal: function(objTime) {
+
+    let findMemo = (currentTime) =>{
+      let found = false;
+       if(this.state.memos.length){
+         this.state.memos.forEach(function(memo){
+           console.log(memo.time.getHours() + currentTime.getHours());
+            if(memo.time.getHours() == currentTime.getHours() &&
+              memo.time.getDate() == currentTime.getDate() &&
+              memo.time.getMonth() == currentTime.getMonth()
+            ){
+              console.log('found!');
+              found = memo.text;
+            }
+         });
+         if(!!found){
+           return found;
+         }
+       }
+       return false;
+    }
+
+    let _found = findMemo(new Date(objTime));
+  //  let _now = this.state.cuurrentCal.s
    this.setState({modalIsOpen: true});
    if(!!objTime){
-     this.setState({openNoteId: objTime});
+     //       display: Moment(new Date(year, month, date, i)).format('hh:mm a'),
+//      let formatDate =  Moment(today, "YYYY-MM-DD HH:mm:ss");
+    this.setState({openNoteId: new Date(objTime)});
+
+    if(!!_found){
+      this.setState({openNoteMsg: _found});
+    } else {
+      this.setState({openNoteMsg: false});
+    }
+
+  //   this.setState({openNoteId: Moment(new Date(objTime)).format(' HH:mm, MMMM DD')});
    }
-  },
-  afterOpenModal: function() {
-    this.refs.subtitle.style.color = '#f00';
   },
   closeModal: function() {
     this.setState({modalIsOpen: false});
@@ -288,7 +408,8 @@ const App = React.createClass({
     this.setState({openNoteMsg: e.target.value});
   },
   saveMemo(){
-    this.state.memos.push({time: new Date(this.state.openNoteId), text: this.state.openNoteMsg});
+  //  console.log(this.state.openNoteId, this.state.openNoteMsg);
+    this.state.memos.push({time: new Date(Moment(this.state.openNoteId)), text: this.state.openNoteMsg});
     this.closeModal();
   },
   submitMemo(e){
@@ -321,55 +442,84 @@ const App = React.createClass({
   },
   render() {
     return (
+    <MuiThemeProvider>
     <div className="App">
-      <div className="App-header">
-      <h1 className="notifry">Notifry</h1>
+      <AppBar title="Notifry" className="nAppBar"
+      iconElementLeft={ <IconButton><DateRange/></IconButton> }>
+      {/*}<h1 className="notifry">Notifry</h1>*/}
       {/*<div className='mic' onClick={()=> this.state.listening ? this.noListen() : this.listen()}>
         <i className="fa fa-microphone" aria-hidden="true"></i>
       </div>
       <button className='newNote' onClick={() => this.openModal(false)}><h5>New Note</h5></button>*/}
-    </div>
+      <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
+
+    </AppBar>
       <div className='app-container'>
-        <Nav setCal={this.setCal} currentCal={this.state.currentCal}/>
         <div className="cal-header-container">
-          <div className = "left-arrow">
+        {/*import React from 'react';
+import IconButton from 'material-ui/IconButton';
+
+const IconButtonExampleSimple = () => (
+  <div>
+    <IconButton iconClassName="muidocs-icon-custom-github" />
+    <IconButton iconClassName="muidocs-icon-custom-github" disabled={true} />
+  </div>
+)*/}
+          <FloatingActionButton className="nFloat">
               <i className="fa fa-hand-o-left" aria-hidden="true" onClick={ () => this.cycleCalendar('left')}></i>
-          </div>
-          <div className="cal-container cal-header" style={{background:'#F0FFFF'}}>
+          </FloatingActionButton>
+          <Paper className="cal-header" style={{background:'#F0FFFF'}} zDepth = {2}>
             { this.viewHeader(this.state.currentCal.start, this.state.currentCal.type).toString() }
-          </div>
-          <div className = "right-arrow">
+          </Paper>
+          <FloatingActionButton className = "nFloat">
             <i className="fa fa-hand-o-right" aria-hidden="true" onClick={ () => this.cycleCalendar('right')}></i>
-          </div>
+          </FloatingActionButton>
         </div>
         <Calendar currentCal={this.state.currentCal}
           selected={this.state.selected} select={this.select}
           openModal={this.openModal}
+          displayFormat={this.displayFormat}
           openNoteId={this.state.openNoteId}
           openNoteMsg={this.state.openNoteMsg}
           calendarObjects={this.state.calendarObjects}
           goToPanelView={this.goToPanelView} />
+
+          {/*  <DialogExampleSimple
+          openModal = {this.openModal}
+          openNoteMsg = {this.state.openNoteMsg}
+          changeOpenMsg = {this.changeOpenMsg}
+          changeOpenId = {this.changeOpenId}
+          openNoteId ={ this.state.openNoteId}
+          submitMemo = {this.submitMemo}
+                  /> */}
         <Modal
           isOpen={this.state.modalIsOpen}
-          onAfterOpen={this.afterOpenModal}
           onRequestClose={this.closeModal}
           style={popUpStyles}
           contentLabel="Example Modal">
-            <h2 ref="subtitle">New Note</h2>
-            <button onClick={this.closeModal}>close</button>
-            <form>
-              <label>note msg:</label>
-              <br />
-              <textarea onChange={this.changeOpenMsg} value={this.state.openNoteMsg || ''} ></textarea>
-              <br />
-              <label>date:</label>
-              <input onChange={this.changeOpenId} value={this.state.openNoteId}/>
-              <br />
-              <button onClick={this.submitMemo}>Save your memo</button>
-            </form>
+          <Card>
+            <CardTitle title={ 'Memo for ' + this.displayFormat(this.state.openNoteId) }></CardTitle>
+              <CardText>
+              <form>
+              <hr />
+                <TextField  multiLine={true} rows={2} rowsMax={4} hintText={'Take out the garbage...'}
+                onChange={this.changeOpenMsg} value={this.state.openNoteMsg || ''} >
+               </TextField>
+                <hr />
+                {/*<label>date:</label>
+                <input onChange={this.changeOpenId} value={this.state.openNoteId}/> */}
+                <br />
+                <CardActions>
+                  <RaisedButton primary={true} onClick={this.submitMemo} label={'Save your memo'} />
+                  <RaisedButton secondary={true} onClick={this.closeModal} label={'close'} />
+                </CardActions>
+              </form>
+              </CardText>
+            </Card>
         </Modal>
       </div>
     </div>
+    </MuiThemeProvider>
   );
   }
 });

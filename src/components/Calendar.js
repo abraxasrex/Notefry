@@ -1,5 +1,6 @@
 import React from 'react';
 import Panel from './Panel.js';
+import Paper from 'material-ui/Paper';
 
 
 const Calendar = React.createClass({
@@ -7,13 +8,15 @@ const Calendar = React.createClass({
    let calProps = this.props;
    let calObjects = calProps.calendarObjects;
     return (
-      <div className='cal-container' style={{background:'#F0FFFF'}}>
+      <Paper className='cal-container' style={{background:'#F0FFFF'}} zDepth={2}>
         {
             calObjects.map(function(obj, i){
               //console.log(obj);
-              return <Panel className='panel-fluid' key={obj.time} propKey={obj.time}
+              return <Panel
+              key={obj.time} propKey={obj.time}
               currentCal={calProps.currentCal}
               display ={obj.display}
+              displayFormat ={calProps.displayFormat}
               selected={calProps.selected}
               select={calProps.select}
               openModal={calProps.openModal}
@@ -21,7 +24,7 @@ const Calendar = React.createClass({
               goToPanelView={calProps.goToPanelView} />
             })
        }
-      </div>
+      </Paper>
     );
   }
 });
