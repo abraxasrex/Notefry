@@ -14,9 +14,8 @@ const NavPill = React.createClass({
       //    {/**/}
   render () {
     return <RaisedButton
-              style={this.props.style}
+              backgroundColor = {this.props.bgColor.color}
               label={this.props.pillName}
-              primary={true}
               onClick={() => this.props.setCal(this.props.pillName)} ></RaisedButton>
   }
 });

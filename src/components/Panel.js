@@ -2,6 +2,28 @@ import React from 'react';
 import Paper from 'material-ui/Paper';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
+import {
+  blue700,
+  blueGrey100,
+  blueGrey500,
+  darkBlack,
+  grey300,
+  lightBlack,
+  purpleA200,
+  white,
+  yellow500,
+  indigo500,
+  cyan500,
+  cyan300,
+  orange500,
+  lightBlue300,
+  teal300
+} from 'material-ui/styles/colors';
+
+import {
+  blue500,
+} from 'material-ui/styles/colors';
+
 const Panel = React.createClass({
   render() {
      let panelClasses = 'cal-panel ' + this.props.currentCal.type + '-cal-panel';
@@ -19,6 +41,7 @@ const Panel = React.createClass({
 
     return (
       <Card
+      style={{backgroundColor:cyan300}}
       className={panelClasses}
         onClick={() => this.props.goToPanelView(this.props.currentCal.type, this.props.thisObj.time, this.props.propKey) }>
 

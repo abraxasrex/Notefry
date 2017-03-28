@@ -22,6 +22,22 @@ import FlatButton from 'material-ui/FlatButton';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import DateRange from 'material-ui/svg-icons/action/date-range';
 import Dialog from 'material-ui/Dialog';
+import {
+  blue500,
+  blue700,
+  blueGrey100,
+  blueGrey500,
+  darkBlack,
+  grey300,
+  lightBlack,
+  purpleA200,
+  white,
+  teal300,
+  yellow500,
+  indigo500,
+  orange500,
+  lightBlue500,
+} from 'material-ui/styles/colors';
 injectTapEventPlugin();
 // import getDayView from './lib.js';
 
@@ -444,7 +460,7 @@ const App = React.createClass({
     return (
     <MuiThemeProvider>
     <div className="App">
-      <AppBar title="Notifry" className="nAppBar"
+      <AppBar title={"Notifry"} className="nAppBar"
       iconElementLeft={ <IconButton><DateRange/></IconButton> }>
       {/*}<h1 className="notifry">Notifry</h1>*/}
       {/*<div className='mic' onClick={()=> this.state.listening ? this.noListen() : this.listen()}>
